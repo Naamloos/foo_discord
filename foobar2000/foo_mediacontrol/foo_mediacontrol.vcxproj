@@ -117,6 +117,7 @@
     <ClCompile Include="track_data.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Discord.h" />
     <ClInclude Include="input_listener.h" />
     <ClInclude Include="media_controls.h" />
     <ClInclude Include="message_listener.h" />

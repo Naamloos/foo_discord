@@ -3,6 +3,10 @@
 #include "playback_listener.h"
 #include "media_controls.h"
 #include "track_data.h"
+#include <time.h>
+#include "Discord.h"
+
+bool init = false;
 
 void playback_listener::on_playback_new_track(metadb_handle_ptr p_track) {
 	try {
@@ -20,6 +24,13 @@ void playback_listener::on_playback_new_track(metadb_handle_ptr p_track) {
 			.set_track_number(data.get_track_number())
 			.set_thumbnail(data.get_album_art())
 			.end_update();
+
+		if (init == false) {
+			discordInit();
+			init = true;
+		}
+		
+		UpdatePresence(data.get_title(), data.get_artist());
 	}
 	catch (pfc::exception e) {
 		popup_message::g_show("Caught exception", "Error");
