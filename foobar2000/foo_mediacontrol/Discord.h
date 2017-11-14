@@ -1,5 +1,6 @@
 #include <iostream>
 #include "stdafx.h"
+#include "util.h"
 #define _CRT_SECURE_NO_WARNING
 
 const char* APPLICATION_ID = "379748462377566219";
@@ -38,7 +39,7 @@ void discordInit()
 void UpdatePresence(wchar_t *songname, wchar_t *artist)
 {
 	char buffer[256];
-	snprintf(buffer, 256, "%ls - %ls", artist, songname);
+	sprintf(buffer, "%s - %s", util::wide_to_utf8(artist), util::wide_to_utf8(songname));
 	DiscordRichPresence discordPresence;
 	memset(&discordPresence, 0, sizeof(discordPresence));
 	discordPresence.largeImageKey = "fb2000";
