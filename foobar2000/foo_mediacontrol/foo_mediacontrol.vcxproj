@@ -105,20 +105,16 @@
   <ItemGroup>
     <ClCompile Include="initquit.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="message_listener.cpp" />
     <ClCompile Include="PCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
     </ClCompile>
     <ClCompile Include="playback_listener.cpp" />
-    <ClCompile Include="preferences.cpp" />
     <ClCompile Include="track_data.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Discord.h" />
-    <ClInclude Include="message_listener.h" />
     <ClInclude Include="playback_listener.h" />
-    <ClInclude Include="preferences.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="track_data.h" />
