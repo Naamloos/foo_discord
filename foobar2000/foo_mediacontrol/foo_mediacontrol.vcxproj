@@ -15,7 +15,7 @@
     <RootNamespace>foo_input_raw</RootNamespace>
     <Keyword>Win32Proj</Keyword>
     <WindowsTargetPlatformVersion>10.0.10240.0</WindowsTargetPlatformVersion>
-    <ProjectName>foo_mediacontrol</ProjectName>
+    <ProjectName>foo_discord</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
@@ -104,9 +104,7 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="initquit.cpp" />
-    <ClCompile Include="input_listener.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="media_controls.cpp" />
     <ClCompile Include="message_listener.cpp" />
     <ClCompile Include="PCH.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -118,8 +116,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Discord.h" />
-    <ClInclude Include="input_listener.h" />
-    <ClInclude Include="media_controls.h" />
     <ClInclude Include="message_listener.h" />
     <ClInclude Include="playback_listener.h" />
     <ClInclude Include="preferences.h" />
@@ -144,9 +140,6 @@
     <ProjectReference Include="..\SDK\foobar2000_SDK.vcxproj">
       <Project>{e8091321-d79d-4575-86ef-064ea1a4a20d}</Project>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <ResourceCompile Include="foo_mediacontrol.rc" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
