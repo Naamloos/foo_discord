@@ -2,7 +2,6 @@
 
 #include "playback_listener.h"
 #include "track_data.h"
-#include <time.h>
 #include "Discord.h"
 
 bool init = false;
