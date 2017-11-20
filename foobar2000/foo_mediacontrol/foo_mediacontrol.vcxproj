@@ -88,7 +88,8 @@
       <AdditionalIncludeDirectories>$(SolutionDir)..\ATLHelpers\Include</AdditionalIncludeDirectories>
       <AdditionalOptions>/ZW:nostdlib /FUplatform.winmd /FUwindows.winmd /Zi /sdl- %(AdditionalOptions)</AdditionalOptions>
       <AdditionalUsingDirectories>$(VSInstallDir)\vc\vcpackages;$(WindowsSdkDir)UnionMetadata;%(AdditionalUsingDirectories)</AdditionalUsingDirectories>
-      <CompileAsWinRT>true</CompileAsWinRT>
+      <CompileAsWinRT>false</CompileAsWinRT>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

@@ -24,7 +24,6 @@ void handleDiscordJoinRequest(const DiscordJoinRequest* request) {}
 
 void discordInit()
 {
-	char buffer[256];
 	DiscordEventHandlers handlers;
 	memset(&handlers, 0, sizeof(handlers));
 	handlers.ready = handleDiscordReady;
@@ -39,7 +38,7 @@ void discordInit()
 void UpdatePresence(wchar_t *songname, wchar_t *artist)
 {
 	char buffer[256];
-	sprintf(buffer, "%s - %s", util::wide_to_utf8(artist), util::wide_to_utf8(songname));
+	sprintf_s(buffer, 256, "%s - %s", util::wide_to_utf8(artist), util::wide_to_utf8(songname));
 	DiscordRichPresence discordPresence;
 	memset(&discordPresence, 0, sizeof(discordPresence));
 	discordPresence.largeImageKey = "fb2000";

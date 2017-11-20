@@ -15,7 +15,6 @@ track_data::track_data(metadb_handle_ptr metadb_data) {
 
 	if (container != nullptr) {
 		const file_info& info = container->info();
-		m_genres = genre_data_vector();
 
 		// populate basic info map
 		for (track_data_map::iterator it = m_data.begin(); it != m_data.end(); ++it) {
@@ -35,7 +34,6 @@ track_data::track_data(metadb_handle_ptr metadb_data) {
 			wchar_t* substring = wcstok_s(genres, genre_separator, &context);
 
 			while (substring) {
-				m_genres.push_back(ref new Platform::String(substring));
 				substring = wcstok_s(nullptr, genre_separator, &context);
 			}
 

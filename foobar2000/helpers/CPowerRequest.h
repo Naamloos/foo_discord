@@ -53,7 +53,7 @@ public:
 
 	static bool IsWin8() {
 		auto ver = myGetOSVersion();
-		return ver >= 0x602;
+		return true;
 	}
 	static WORD myGetOSVersion() {
 		const DWORD ver = GetVersion();

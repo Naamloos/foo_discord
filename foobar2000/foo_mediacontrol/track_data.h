@@ -7,10 +7,8 @@
 #define QUERY_TRACK_NUMBER "track number"
 
 #include <map>
-#include <vector>
 
 typedef std::map<const char*, wchar_t*> track_data_map;
-typedef std::vector<Platform::String^> genre_data_vector;
 
 class track_data {
 public:
@@ -49,10 +47,6 @@ public:
 		return m_name;
 	}
 
-	inline genre_data_vector& get_genres() {
-		return m_genres;
-	}
-
 	inline album_art_data::ptr& get_album_art() {
 		return m_album_art;
 	}
@@ -67,8 +61,7 @@ private:
 		{ QUERY_ALBUM, empty },
 		{ QUERY_TRACK_NUMBER, empty }
 	};
-	
-	genre_data_vector m_genres;
+
 	album_art_data::ptr m_album_art = nullptr;
 	wchar_t* m_name;
 
