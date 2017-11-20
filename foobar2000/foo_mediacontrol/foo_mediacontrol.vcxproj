@@ -12,9 +12,9 @@
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <ProjectGuid>{85FBFD09-0099-4FE9-9DB6-78DB6F60F817}</ProjectGuid>
-    <RootNamespace>foo_input_raw</RootNamespace>
+    <RootNamespace>foo_discord</RootNamespace>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.10240.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
     <ProjectName>foo_discord</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />

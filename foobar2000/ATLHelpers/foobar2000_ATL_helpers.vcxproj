@@ -22,6 +22,7 @@
     <ProjectGuid>{622E8B19-8109-4717-BD4D-9657AA78363E}</ProjectGuid>
     <RootNamespace>foobar2000_ATL_helpers</RootNamespace>
     <Keyword>Win32Proj</Keyword>
+    <WindowsTargetPlatformVersion>8.1</WindowsTargetPlatformVersion>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
