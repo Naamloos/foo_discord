@@ -22,7 +22,7 @@ Compilation requires Windows 10 SDK version 10.0.10240.0 or higher.
  - Move the resulting foo_discord.dll as well as discord-rpc to your foobar2000 components folder.
  - (Re)Start foobar2000.
  
- ### Support / Contact
+### Support / Contact
 Naamloos#2887 on Discord, or join my [server](http://www.discord.gg/0oZpaYcAjfvkDuE4).
 
 ### License
