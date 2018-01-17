@@ -12,7 +12,7 @@ Adds the ability for foobar2000 to interact with Discord rich presences.
 Open your `Components` screen in foobar2000 and drop `Release.zip` on it.
 
 ### Compilation
----------
+---------------
 #### Windows:
 
 Compilation requires Windows 10 SDK version 10.0.10240.0 or higher.
@@ -23,8 +23,9 @@ Compilation requires Windows 10 SDK version 10.0.10240.0 or higher.
  - (Re)Start foobar2000.
  
 ### Support / Contact
+---------------------
 Naamloos#2887 on Discord, or join my [server](http://www.discord.gg/0oZpaYcAjfvkDuE4).
 
 ### License
-----
+-----------
 [BSD-2-Clause](https://github.com/NaamloosDT/foo_discord/blob/master/LICENSE)
