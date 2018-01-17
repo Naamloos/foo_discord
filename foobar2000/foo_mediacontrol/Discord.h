@@ -35,15 +35,45 @@ void discordInit()
 	Discord_Initialize(APPLICATION_ID, &handlers, 1, NULL);
 }
 
+static char *savedsongname;
+static char *savedartist;
+
 void UpdatePresence(wchar_t *songname, wchar_t *artist)
 {
-	char buffer[256];
-	sprintf_s(buffer, 256, "%s - %s", util::wide_to_utf8(artist), util::wide_to_utf8(songname));
+	savedsongname = util::wide_to_utf8(songname);
+	savedartist = util::wide_to_utf8(artist);
 	DiscordRichPresence discordPresence;
 	memset(&discordPresence, 0, sizeof(discordPresence));
+	discordPresence.details = savedsongname;
 	discordPresence.largeImageKey = "fb2000";
 	discordPresence.largeImageText = "Foobar2000";
-	discordPresence.state = buffer;
+	discordPresence.state = savedartist;
+	discordPresence.instance = 1;
+	Discord_UpdatePresence(&discordPresence);
+}
+
+void UpdatePresencePaused()
+{
+	char buffer[256];
+	sprintf_s(buffer, 256, "%s (Paused)", savedsongname);
+	DiscordRichPresence discordPresence;
+	memset(&discordPresence, 0, sizeof(discordPresence));
+	discordPresence.details = buffer;
+	discordPresence.largeImageKey = "fbpause";
+	discordPresence.largeImageText = "Foobar2000";
+	discordPresence.state = savedartist;
+	discordPresence.instance = 1;
+	Discord_UpdatePresence(&discordPresence);
+}
+
+void UpdatePresenceStopped()
+{
+	char buffer[256];
+	DiscordRichPresence discordPresence;
+	memset(&discordPresence, 0, sizeof(discordPresence));
+	discordPresence.largeImageKey = "fbstop";
+	discordPresence.largeImageText = "Foobar2000";
+	discordPresence.details = "Stopped";
 	discordPresence.instance = 1;
 	Discord_UpdatePresence(&discordPresence);
 }
