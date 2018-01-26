@@ -51,6 +51,10 @@ public:
 		return m_album_art;
 	}
 
+	inline double get_track_length() {
+		return tracklength;
+	}
+
 	static wchar_t* const empty;
 
 private:
@@ -64,6 +68,7 @@ private:
 
 	album_art_data::ptr m_album_art = nullptr;
 	wchar_t* m_name;
+	double tracklength;
 
 	static wchar_t* const genre_separator;
 };

@@ -35,13 +35,22 @@ void discordInit()
 	Discord_Initialize(APPLICATION_ID, &handlers, 1, NULL);
 }
 
+#include <ctime>;
+
 static char *savedsongname;
 static char *savedartist;
+static double start_epoch;
+static double pause_epoch;
+static double savedlength;
 
-void UpdatePresence(wchar_t *songname, wchar_t *artist)
+void UpdatePresence(wchar_t *songname, wchar_t *artist, double tracklength)
 {
 	savedsongname = util::wide_to_utf8(songname);
 	savedartist = util::wide_to_utf8(artist);
+	savedlength = tracklength;
+	std::time_t result = std::time(nullptr);
+	start_epoch = result;
+
 	DiscordRichPresence discordPresence;
 	memset(&discordPresence, 0, sizeof(discordPresence));
 	discordPresence.details = savedsongname;
@@ -49,6 +58,39 @@ void UpdatePresence(wchar_t *songname, wchar_t *artist)
 	discordPresence.largeImageText = "Foobar2000";
 	discordPresence.state = savedartist;
 	discordPresence.instance = 1;
+	discordPresence.startTimestamp = result;
+	discordPresence.endTimestamp = result + tracklength;
+	Discord_UpdatePresence(&discordPresence);
+}
+
+void UpdatePresenceSeeked(double seek) {
+	std::time_t result = std::time(nullptr);
+
+	DiscordRichPresence discordPresence;
+	memset(&discordPresence, 0, sizeof(discordPresence));
+	discordPresence.details = savedsongname;
+	discordPresence.largeImageKey = "fb2000";
+	discordPresence.largeImageText = "Foobar2000";
+	discordPresence.state = savedartist;
+	discordPresence.instance = 1;
+	discordPresence.startTimestamp = result;
+	discordPresence.endTimestamp = result + (savedlength - seek);
+	Discord_UpdatePresence(&discordPresence);
+}
+
+void UpdatePresenceResumed() {
+	std::time_t result = std::time(nullptr);
+	double played = start_epoch - pause_epoch;
+
+	DiscordRichPresence discordPresence;
+	memset(&discordPresence, 0, sizeof(discordPresence));
+	discordPresence.details = savedsongname;
+	discordPresence.largeImageKey = "fb2000";
+	discordPresence.largeImageText = "Foobar2000";
+	discordPresence.state = savedartist;
+	discordPresence.instance = 1;
+	discordPresence.startTimestamp = result;
+	discordPresence.endTimestamp = result + (savedlength - played);
 	Discord_UpdatePresence(&discordPresence);
 }
 

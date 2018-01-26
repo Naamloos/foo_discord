@@ -22,6 +22,8 @@ track_data::track_data(metadb_handle_ptr metadb_data) {
 				it->second = util::utf8_to_wide(info.meta_get(it->first, 0));
 			}
 		}
+
+		tracklength = info.get_length();
 		
 		// populate genre vector
 		if (info.meta_exists("genre")) {
@@ -56,7 +58,6 @@ track_data::track_data(metadb_handle_ptr metadb_data) {
 	tracks.add_item(metadb_data);
 
 	album_art_extractor_instance_v2::ptr extractor = static_api_ptr_t<album_art_manager_v2>()->open(tracks, ids, abort);
-
 	for (byte i = 0; i < ids.get_count(); ++i) {
 		if (extractor->query(ids[i], m_album_art, abort)) {
 			break;
