@@ -80,7 +80,7 @@ void UpdatePresenceSeeked(double seek) {
 
 void UpdatePresenceResumed() {
 	std::time_t result = std::time(nullptr);
-	double played = start_epoch - pause_epoch;
+	double played = pause_epoch - start_epoch;
 
 	DiscordRichPresence discordPresence;
 	memset(&discordPresence, 0, sizeof(discordPresence));
@@ -96,6 +96,7 @@ void UpdatePresenceResumed() {
 
 void UpdatePresencePaused()
 {
+	pause_epoch = std::time(nullptr);
 	char buffer[256];
 	sprintf_s(buffer, 256, "%s (Paused)", savedsongname);
 	DiscordRichPresence discordPresence;

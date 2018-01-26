@@ -15,17 +15,11 @@ void playback_listener::on_playback_new_track(metadb_handle_ptr p_track) {
 			discordInit();
 			init = true;
 		}
-		
+
 		UpdatePresence(data.get_title(), data.get_artist(), data.get_track_length());
 	}
 	catch (pfc::exception e) {
 		popup_message::g_show("Caught exception", "Error");
-	}
-}
-
-void playback_listener::on_playback_starting(play_control::t_track_command p_command, bool p_paused) {
-	if (p_paused == false) {
-		UpdatePresenceResumed();
 	}
 }
 
@@ -44,5 +38,6 @@ void playback_listener::on_playback_pause(bool p_state) {
 		UpdatePresencePaused();
 	}
 	else {
+		UpdatePresenceResumed();
 	}
 }
