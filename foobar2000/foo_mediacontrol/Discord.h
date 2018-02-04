@@ -54,7 +54,9 @@ void UpdatePresence(wchar_t *songname, wchar_t *artist, double tracklength)
 	DiscordRichPresence discordPresence;
 	memset(&discordPresence, 0, sizeof(discordPresence));
 	discordPresence.details = savedsongname;
-	discordPresence.largeImageKey = "fb2000";
+	discordPresence.largeImageKey = "foobar";
+	discordPresence.smallImageKey = "play";
+	discordPresence.smallImageText = "Playing";
 	discordPresence.largeImageText = "Foobar2000";
 	discordPresence.state = savedartist;
 	discordPresence.instance = 1;
@@ -69,7 +71,9 @@ void UpdatePresenceSeeked(double seek) {
 	DiscordRichPresence discordPresence;
 	memset(&discordPresence, 0, sizeof(discordPresence));
 	discordPresence.details = savedsongname;
-	discordPresence.largeImageKey = "fb2000";
+	discordPresence.largeImageKey = "foobar";
+	discordPresence.smallImageKey = "play";
+	discordPresence.smallImageText = "Playing";
 	discordPresence.largeImageText = "Foobar2000";
 	discordPresence.state = savedartist;
 	discordPresence.instance = 1;
@@ -85,7 +89,9 @@ void UpdatePresenceResumed() {
 	DiscordRichPresence discordPresence;
 	memset(&discordPresence, 0, sizeof(discordPresence));
 	discordPresence.details = savedsongname;
-	discordPresence.largeImageKey = "fb2000";
+	discordPresence.largeImageKey = "foobar";
+	discordPresence.smallImageKey = "play";
+	discordPresence.smallImageText = "Playing";
 	discordPresence.largeImageText = "Foobar2000";
 	discordPresence.state = savedartist;
 	discordPresence.instance = 1;
@@ -102,7 +108,9 @@ void UpdatePresencePaused()
 	DiscordRichPresence discordPresence;
 	memset(&discordPresence, 0, sizeof(discordPresence));
 	discordPresence.details = buffer;
-	discordPresence.largeImageKey = "fbpause";
+	discordPresence.largeImageKey = "foobar";
+	discordPresence.smallImageKey = "pause";
+	discordPresence.smallImageText = "Paused";
 	discordPresence.largeImageText = "Foobar2000";
 	discordPresence.state = savedartist;
 	discordPresence.instance = 1;
@@ -114,7 +122,9 @@ void UpdatePresenceStopped()
 	char buffer[256];
 	DiscordRichPresence discordPresence;
 	memset(&discordPresence, 0, sizeof(discordPresence));
-	discordPresence.largeImageKey = "fbstop";
+	discordPresence.largeImageKey = "foobar";
+	discordPresence.smallImageKey = "stop";
+	discordPresence.smallImageText = "Stopped";
 	discordPresence.largeImageText = "Foobar2000";
 	discordPresence.details = "Stopped";
 	discordPresence.instance = 1;
