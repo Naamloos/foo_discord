@@ -3,9 +3,9 @@ Adds the ability for foobar2000 to interact with Discord rich presences.
 
 ### Screenshots
 ---------
-![Screenshot1](https://saiko.is-a-good-waifu.com/d7b02a.png)
-![Screenshot2](https://saiko.is-a-good-waifu.com/bf9e45.png)
-![Screenshot3](https://saiko.is-a-good-waifu.com/f4d350.png)
+![Screenshot1](https://saiko.is-a-good-waifu.com/ba6062.png)
+![Screenshot2](https://saiko.is-a-good-waifu.com/1b680b.png)
+![Screenshot3](https://saiko.is-a-good-waifu.com/307e70.png)
 
 ### Installing
 ---------
