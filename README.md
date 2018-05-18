@@ -15,6 +15,10 @@ Downloads are available at the [releases](https://github.com/NaamloosDT/foo_disc
 
 If you like this, please consider [buying me a coffee](https://ko-fi.com/naamloos) :^)
 
+![dl1](https://saiko.is-a-good-waifu.com/0fede1.png)
+
+![dl2](https://saiko.is-a-good-waifu.com/0cd2ea.png)
+
 ### Compilation
 ---------------
 #### Windows:
