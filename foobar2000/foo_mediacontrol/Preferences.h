@@ -16,6 +16,9 @@ public:
 		COMMAND_HANDLER_EX(IDC_SHOWSTOP, BN_CLICKED, on_edit)
 		COMMAND_HANDLER_EX(IDC_SHOWSONGSTOP, BN_CLICKED, on_edit)
 		COMMAND_HANDLER_EX(IDC_SHOWALBUM, BN_CLICKED, on_edit)
+		COMMAND_HANDLER(IDC_BUTTON1, BN_CLICKED, OnBnClickedButton1)
+		COMMAND_HANDLER(IDC_BUTTON2, BN_CLICKED, OnBnClickedButton2)
+		COMMAND_HANDLER(IDC_BUTTON3, BN_CLICKED, OnBnClickedButton3)
 	END_MSG_MAP()
 
 	t_uint32 get_state();
@@ -46,6 +49,11 @@ private:
 	static cfg_bool show_album;
 
 	static advconfig_branch_factory g_advconfig_branch;
+public:
+	LRESULT OnNMClickSyslink1(int /*idCtrl*/, LPNMHDR pNMHDR, BOOL& /*bHandled*/);
+	LRESULT OnBnClickedButton1(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+	LRESULT OnBnClickedButton2(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+	LRESULT OnBnClickedButton3(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 };
 
 class preferences_page_custom_impl : public preferences_page_impl<preferences> {

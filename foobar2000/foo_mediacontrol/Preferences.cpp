@@ -69,3 +69,27 @@ void preferences::reset() {
 }
 
 static preferences_page_factory_t<preferences_page_custom_impl> g_preferences_page_factory;
+
+
+LRESULT preferences::OnBnClickedButton1(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+	// TODO: Add your control notification handler code here
+	ShellExecute(0, 0, L"https://github.com/NaamloosDT/foo_discord", 0, 0, SW_SHOW);
+	return 0;
+}
+
+
+LRESULT preferences::OnBnClickedButton2(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+	// TODO: Add your control notification handler code here
+	ShellExecute(0, 0, L"https://discord.gg/hMRWUTa", 0, 0, SW_SHOW);
+	return 0;
+}
+
+
+LRESULT preferences::OnBnClickedButton3(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/)
+{
+	// TODO: Add your control notification handler code here
+	ShellExecute(0, 0, L"https://ko-fi.com/naamloos", 0, 0, SW_SHOW);
+	return 0;
+}

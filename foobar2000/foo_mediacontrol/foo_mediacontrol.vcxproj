@@ -144,6 +144,9 @@
   <ItemGroup>
     <ResourceCompile Include="foo_discord.rc" />
   </ItemGroup>
+  <ItemGroup>
+    <Image Include="Discord-Logo-Color.bmp" />
+  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
