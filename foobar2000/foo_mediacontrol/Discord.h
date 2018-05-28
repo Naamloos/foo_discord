@@ -1,6 +1,8 @@
 #include <iostream>
+#include <sstream>
 #include "stdafx.h"
 #include "util.h"
+#include "preferences.h"
 #define _CRT_SECURE_NO_WARNING
 
 const char* APPLICATION_ID = "379748462377566219";
@@ -11,27 +13,12 @@ void handleDiscordDisconnected(int errcode, const char* message) {}
 
 void handleDiscordError(int errcode, const char* message) {}
 
-void handleDiscordJoin(const char* secret) {
-	std::cout << "Somone wants to join your game" << std::endl;
-
-}
-
-void handleDiscordSpectate(const char* secret) {
-	std::cout << "Somone wants to Spectate you" << std::endl;
-}
-
-void handleDiscordJoinRequest(const DiscordJoinRequest* request) {}
-
 void discordInit()
 {
 	DiscordEventHandlers handlers;
 	memset(&handlers, 0, sizeof(handlers));
-	handlers.ready = handleDiscordReady;
 	handlers.disconnected = handleDiscordDisconnected;
 	handlers.errored = handleDiscordError;
-	handlers.joinGame = handleDiscordJoin;
-	handlers.spectateGame = handleDiscordSpectate;
-	handlers.joinRequest = handleDiscordJoinRequest;
 	Discord_Initialize(APPLICATION_ID, &handlers, 1, NULL);
 }
 
@@ -39,14 +26,17 @@ void discordInit()
 
 static char *savedsongname;
 static char *savedartist;
+static char *savedalbum;
 static double start_epoch;
 static double pause_epoch;
 static double savedlength;
 
-void UpdatePresence(wchar_t *songname, wchar_t *artist, double tracklength, wchar_t *filename)
+void UpdatePresence(wchar_t *songname, wchar_t *artist, double tracklength, wchar_t *filename, wchar_t *album)
 {
 	savedsongname = util::wide_to_utf8(songname);
 	savedartist = util::wide_to_utf8(artist);
+	savedalbum = util::wide_to_utf8(album);
+
 	if (strlen(savedsongname) < 1) {
 		savedsongname = util::wide_to_utf8(filename);
 	}
@@ -60,11 +50,20 @@ void UpdatePresence(wchar_t *songname, wchar_t *artist, double tracklength, wcha
 	DiscordRichPresence discordPresence;
 	memset(&discordPresence, 0, sizeof(discordPresence));
 	discordPresence.details = savedsongname;
-	discordPresence.largeImageKey = "foobar";
+	if (preferences::get_show_image()) {
+		discordPresence.largeImageKey = "foobar";
+	}
 	discordPresence.smallImageKey = "play";
 	discordPresence.smallImageText = "Playing";
 	discordPresence.largeImageText = "Foobar2000";
-	discordPresence.state = savedartist;
+	if (preferences::get_show_album() && strlen(savedalbum) > 0) {
+		std::stringstream ss;
+		ss << savedartist << " [" << savedalbum << "]";
+		discordPresence.state = ss.str().c_str();
+	}
+	else {
+		discordPresence.state = savedartist;
+	}
 	discordPresence.instance = 1;
 	discordPresence.startTimestamp = result;
 	discordPresence.endTimestamp = result + tracklength;
@@ -77,11 +76,20 @@ void UpdatePresenceSeeked(double seek) {
 	DiscordRichPresence discordPresence;
 	memset(&discordPresence, 0, sizeof(discordPresence));
 	discordPresence.details = savedsongname;
-	discordPresence.largeImageKey = "foobar";
+	if (preferences::get_show_image()) {
+		discordPresence.largeImageKey = "foobar";
+	}
 	discordPresence.smallImageKey = "play";
 	discordPresence.smallImageText = "Playing";
 	discordPresence.largeImageText = "Foobar2000";
-	discordPresence.state = savedartist;
+	if (preferences::get_show_album() && strlen(savedalbum) > 0) {
+		std::stringstream ss;
+		ss << savedartist << " [" << savedalbum << "]";
+		discordPresence.state = ss.str().c_str();
+	}
+	else {
+		discordPresence.state = savedartist;
+	}
 	discordPresence.instance = 1;
 	discordPresence.startTimestamp = result;
 	discordPresence.endTimestamp = result + (savedlength - seek);
@@ -95,11 +103,20 @@ void UpdatePresenceResumed() {
 	DiscordRichPresence discordPresence;
 	memset(&discordPresence, 0, sizeof(discordPresence));
 	discordPresence.details = savedsongname;
-	discordPresence.largeImageKey = "foobar";
+	if (preferences::get_show_image()) {
+		discordPresence.largeImageKey = "foobar";
+	}
 	discordPresence.smallImageKey = "play";
 	discordPresence.smallImageText = "Playing";
 	discordPresence.largeImageText = "Foobar2000";
-	discordPresence.state = savedartist;
+	if (preferences::get_show_album() && strlen(savedalbum) > 0) {
+		std::stringstream ss;
+		ss << savedartist << " [" << savedalbum << "]";
+		discordPresence.state = ss.str().c_str();
+	}
+	else {
+		discordPresence.state = savedartist;
+	}
 	discordPresence.instance = 1;
 	discordPresence.startTimestamp = result;
 	discordPresence.endTimestamp = result + (savedlength - played);
@@ -114,25 +131,66 @@ void UpdatePresencePaused()
 	DiscordRichPresence discordPresence;
 	memset(&discordPresence, 0, sizeof(discordPresence));
 	discordPresence.details = buffer;
-	discordPresence.largeImageKey = "foobar";
+	if (preferences::get_show_image()) {
+		discordPresence.largeImageKey = "foobar";
+	}
 	discordPresence.smallImageKey = "pause";
 	discordPresence.smallImageText = "Paused";
 	discordPresence.largeImageText = "Foobar2000";
-	discordPresence.state = savedartist;
+	if (preferences::get_show_album() && strlen(savedalbum) > 0) {
+		std::stringstream ss;
+		ss << savedartist << " [" << savedalbum << "]";
+		discordPresence.state = ss.str().c_str();
+	}
+	else {
+		discordPresence.state = savedartist;
+	}
 	discordPresence.instance = 1;
 	Discord_UpdatePresence(&discordPresence);
 }
 
 void UpdatePresenceStopped()
 {
-	char buffer[256];
-	DiscordRichPresence discordPresence;
-	memset(&discordPresence, 0, sizeof(discordPresence));
-	discordPresence.largeImageKey = "foobar";
-	discordPresence.smallImageKey = "stop";
-	discordPresence.smallImageText = "Stopped";
-	discordPresence.largeImageText = "Foobar2000";
-	discordPresence.details = "Stopped";
-	discordPresence.instance = 1;
-	Discord_UpdatePresence(&discordPresence);
+	if (preferences::get_show_stop()) {
+		if (preferences::get_show_songstop() == false) {
+			char buffer[256];
+			DiscordRichPresence discordPresence;
+			memset(&discordPresence, 0, sizeof(discordPresence));
+			if (preferences::get_show_image()) {
+				discordPresence.largeImageKey = "foobar";
+			}
+			discordPresence.smallImageKey = "stop";
+			discordPresence.smallImageText = "Stopped";
+			discordPresence.largeImageText = "Foobar2000";
+			discordPresence.details = "Stopped";
+			discordPresence.instance = 1;
+			Discord_UpdatePresence(&discordPresence);
+		}
+		else {
+			char buffer[256];
+			sprintf_s(buffer, 256, "%s (Stopped)", savedsongname);
+			DiscordRichPresence discordPresence;
+			memset(&discordPresence, 0, sizeof(discordPresence));
+			discordPresence.details = buffer;
+			if (preferences::get_show_image()) {
+				discordPresence.largeImageKey = "foobar";
+			}
+			discordPresence.smallImageKey = "stop";
+			discordPresence.smallImageText = "Stopped";
+			discordPresence.largeImageText = "Foobar2000";
+			if (preferences::get_show_album() && strlen(savedalbum) > 0) {
+				std::stringstream ss;
+				ss << savedartist << " [" << savedalbum << "]";
+				discordPresence.state = ss.str().c_str();
+			}
+			else {
+				discordPresence.state = savedartist;
+			}
+			discordPresence.instance = 1;
+			Discord_UpdatePresence(&discordPresence);
+		}
+	}
+	else {
+		Discord_ClearPresence();
+	}
 }

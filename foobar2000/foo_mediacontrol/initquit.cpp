@@ -2,6 +2,8 @@
 
 #include "playback_listener.h"
 
+#include "Preferences.h"
+
 class myinitquit : public initquit {
 public:
 	void on_init() {

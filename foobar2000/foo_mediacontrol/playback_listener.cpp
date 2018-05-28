@@ -16,7 +16,7 @@ void playback_listener::on_playback_new_track(metadb_handle_ptr p_track) {
 			init = true;
 		}
 
-		UpdatePresence(data.get_title(), data.get_artist(), data.get_track_length(), data.get_file_name());
+		UpdatePresence(data.get_title(), data.get_artist(), data.get_track_length(), data.get_file_name(), data.get_album());
 	}
 	catch (pfc::exception e) {
 		popup_message::g_show("Caught exception", "Error");
