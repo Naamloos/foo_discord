@@ -43,10 +43,16 @@ static double start_epoch;
 static double pause_epoch;
 static double savedlength;
 
-void UpdatePresence(wchar_t *songname, wchar_t *artist, double tracklength)
+void UpdatePresence(wchar_t *songname, wchar_t *artist, double tracklength, wchar_t *filename)
 {
 	savedsongname = util::wide_to_utf8(songname);
 	savedartist = util::wide_to_utf8(artist);
+	if (strlen(savedsongname) < 1) {
+		savedsongname = util::wide_to_utf8(filename);
+	}
+	if (strlen(savedartist) < 1) {
+		savedartist = "";
+	}
 	savedlength = tracklength;
 	std::time_t result = std::time(nullptr);
 	start_epoch = result;
