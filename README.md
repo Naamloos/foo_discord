@@ -3,13 +3,21 @@ Adds the ability for foobar2000 to interact with Discord rich presences.
 
 ### Screenshots
 ---------
-![Screenshot1](https://saiko.is-a-good-waifu.com/d7b02a.png)
-![Screenshot2](https://saiko.is-a-good-waifu.com/bf9e45.png)
-![Screenshot3](https://saiko.is-a-good-waifu.com/f4d350.png)
+![Screenshot1](https://saiko.is-a-good-waifu.com/ba6062.png)
+![Screenshot2](https://saiko.is-a-good-waifu.com/1b680b.png)
+![Screenshot3](https://saiko.is-a-good-waifu.com/307e70.png)
 
 ### Installing
 ---------
 Open your `Components` screen in foobar2000 and drop `foo_discord.zip` on it.
+
+Downloads are available at the [releases](https://github.com/NaamloosDT/foo_discord/releases) tab.
+
+If you like this, please consider [buying me a coffee](https://ko-fi.com/naamloos) :^)
+
+![dl1](https://saiko.is-a-good-waifu.com/0fede1.png)
+
+![dl2](https://saiko.is-a-good-waifu.com/0cd2ea.png)
 
 ### Compilation
 ---------------
@@ -24,7 +32,7 @@ Compilation requires Windows 10 SDK version 10.0.10240.0 or higher.
  
 ### Support / Contact
 ---------------------
-Naamloos#2887 on Discord, or join my [server](http://www.discord.gg/0oZpaYcAjfvkDuE4).
+Naamloos#2887 on Discord, or join my [server](https://discord.gg/hMRWUTa).
 
 ### License
 -----------
