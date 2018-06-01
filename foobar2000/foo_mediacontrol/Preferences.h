@@ -16,6 +16,15 @@ public:
 		COMMAND_HANDLER_EX(IDC_SHOWSTOP, BN_CLICKED, on_edit)
 		COMMAND_HANDLER_EX(IDC_SHOWSONGSTOP, BN_CLICKED, on_edit)
 		COMMAND_HANDLER_EX(IDC_SHOWALBUM, BN_CLICKED, on_edit)
+		COMMAND_HANDLER_EX(IDC_CHECK7, BN_CLICKED, on_edit)
+
+		COMMAND_HANDLER_EX(IDC_CHECK1, BN_CLICKED, on_edit)
+		COMMAND_HANDLER_EX(IDC_CHECK2, BN_CLICKED, on_edit)
+		COMMAND_HANDLER_EX(IDC_CHECK3, BN_CLICKED, on_edit)
+		COMMAND_HANDLER_EX(IDC_CHECK4, BN_CLICKED, on_edit)
+		COMMAND_HANDLER_EX(IDC_CHECK5, BN_CLICKED, on_edit)
+		COMMAND_HANDLER_EX(IDC_CHECK6, BN_CLICKED, on_edit)
+
 		COMMAND_HANDLER(IDC_BUTTON1, BN_CLICKED, OnBnClickedButton1)
 		COMMAND_HANDLER(IDC_BUTTON2, BN_CLICKED, OnBnClickedButton2)
 		COMMAND_HANDLER(IDC_BUTTON3, BN_CLICKED, OnBnClickedButton3)
@@ -29,6 +38,8 @@ public:
 	inline static bool get_show_stop() { return show_stop; }
 	inline static bool get_show_songstop() { return show_songstop; }
 	inline static bool get_show_album() { return show_album; }
+	inline static int get_art_type() { return art_type; }
+	inline static bool get_enabled() { return enabled; }
 
 private:
 	BOOL on_init(CWindow, LPARAM);
@@ -41,16 +52,19 @@ private:
 	static const GUID guid_show_stop;
 	static const GUID guid_show_songstop;
 	static const GUID guid_show_album;
+	static const GUID guid_art_type;
 	static const GUID guid_advconfig_branch;
+	static const GUID guid_enabled;
 
 	static cfg_bool show_image;
 	static cfg_bool show_stop;
 	static cfg_bool show_songstop;
 	static cfg_bool show_album;
+	static cfg_int art_type;
+	static cfg_bool enabled;
 
 	static advconfig_branch_factory g_advconfig_branch;
 public:
-	LRESULT OnNMClickSyslink1(int /*idCtrl*/, LPNMHDR pNMHDR, BOOL& /*bHandled*/);
 	LRESULT OnBnClickedButton1(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 	LRESULT OnBnClickedButton2(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 	LRESULT OnBnClickedButton3(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
