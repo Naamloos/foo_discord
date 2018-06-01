@@ -125,7 +125,10 @@ void UpdatePresenceSeeked(double seek) {
 	}
 }
 
-void UpdatePresenceResumed() {
+void UpdatePresenceResumed(wchar_t *songname, wchar_t *artist, double tracklength, wchar_t *filename, wchar_t *album) {
+	if (savedartist == NULL && savedsongname == NULL) {
+		UpdatePresence(songname, artist, tracklength, filename, album);
+	}
 	if (preferences::get_enabled()) {
 		std::time_t result = std::time(nullptr);
 		double played = pause_epoch - start_epoch;
@@ -154,8 +157,10 @@ void UpdatePresenceResumed() {
 	}
 }
 
-void UpdatePresencePaused()
-{
+void UpdatePresencePaused(wchar_t *songname, wchar_t *artist, double tracklength, wchar_t *filename, wchar_t *album) {
+	if (savedartist == NULL && savedsongname == NULL) {
+		UpdatePresence(songname, artist, tracklength, filename, album);
+	}
 	if (preferences::get_enabled()) {
 		pause_epoch = std::time(nullptr);
 		char buffer[256];

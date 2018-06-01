@@ -33,11 +33,13 @@ void playback_listener::on_playback_stop(play_control::t_stop_reason p_reason) {
 	}
 }
 
-void playback_listener::on_playback_pause(bool p_state) {
+void playback_listener::on_playback_pause(bool p_state, metadb_handle_ptr p_track) {
+	track_data data(p_track);
+
 	if (p_state) {
-		UpdatePresencePaused();
+		UpdatePresencePaused(data.get_title(), data.get_artist(), data.get_track_length(), data.get_file_name(), data.get_album());
 	}
 	else {
-		UpdatePresenceResumed();
+		UpdatePresenceResumed(data.get_title(), data.get_artist(), data.get_track_length(), data.get_file_name(), data.get_album());
 	}
 }
