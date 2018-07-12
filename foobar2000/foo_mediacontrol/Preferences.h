@@ -28,6 +28,7 @@ public:
 		COMMAND_HANDLER(IDC_BUTTON1, BN_CLICKED, OnBnClickedButton1)
 		COMMAND_HANDLER(IDC_BUTTON2, BN_CLICKED, OnBnClickedButton2)
 		COMMAND_HANDLER(IDC_BUTTON3, BN_CLICKED, OnBnClickedButton3)
+		COMMAND_HANDLER(IDC_CHECK8, BN_CLICKED, OnBnClickedCheck8)
 	END_MSG_MAP()
 
 	t_uint32 get_state();
@@ -40,6 +41,7 @@ public:
 	inline static bool get_show_album() { return show_album; }
 	inline static int get_art_type() { return art_type; }
 	inline static bool get_enabled() { return enabled; }
+	inline static bool get_elapsed() { return elapsed; }
 
 private:
 	BOOL on_init(CWindow, LPARAM);
@@ -55,6 +57,7 @@ private:
 	static const GUID guid_art_type;
 	static const GUID guid_advconfig_branch;
 	static const GUID guid_enabled;
+	static const GUID guid_elapsed;
 
 	static cfg_bool show_image;
 	static cfg_bool show_stop;
@@ -62,12 +65,14 @@ private:
 	static cfg_bool show_album;
 	static cfg_int art_type;
 	static cfg_bool enabled;
+	static cfg_bool elapsed;
 
 	static advconfig_branch_factory g_advconfig_branch;
 public:
 	LRESULT OnBnClickedButton1(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 	LRESULT OnBnClickedButton2(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 	LRESULT OnBnClickedButton3(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
+	LRESULT OnBnClickedCheck8(WORD /*wNotifyCode*/, WORD /*wID*/, HWND /*hWndCtl*/, BOOL& /*bHandled*/);
 };
 
 class preferences_page_custom_impl : public preferences_page_impl<preferences> {

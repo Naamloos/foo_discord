@@ -3,6 +3,7 @@
 #include "stdafx.h"
 #include "util.h"
 #include "preferences.h"
+#include <ctime>;
 #define _CRT_SECURE_NO_WARNING
 
 const char* APPLICATION_ID = "379748462377566219";
@@ -13,6 +14,8 @@ void handleDiscordDisconnected(int errcode, const char* message) {}
 
 void handleDiscordError(int errcode, const char* message) {}
 
+static double foostarttime;
+
 void discordInit()
 {
 	DiscordEventHandlers handlers;
@@ -20,9 +23,8 @@ void discordInit()
 	handlers.disconnected = handleDiscordDisconnected;
 	handlers.errored = handleDiscordError;
 	Discord_Initialize(APPLICATION_ID, &handlers, 1, NULL);
+	foostarttime = std::time(nullptr);
 }
-
-#include <ctime>;
 
 static char *savedsongname;
 static char *savedartist;
@@ -91,8 +93,15 @@ void UpdatePresence(wchar_t *songname, wchar_t *artist, double tracklength, wcha
 			discordPresence.state = savedartist;
 		}
 		discordPresence.instance = 1;
-		discordPresence.startTimestamp = result;
-		discordPresence.endTimestamp = result + tracklength;
+
+		if (preferences::get_elapsed()) {
+			discordPresence.startTimestamp = foostarttime;
+		}
+		else {
+			discordPresence.startTimestamp = result;
+			discordPresence.endTimestamp = result + tracklength;
+		}
+
 		Discord_UpdatePresence(&discordPresence);
 	}
 }
@@ -119,8 +128,15 @@ void UpdatePresenceSeeked(double seek) {
 			discordPresence.state = savedartist;
 		}
 		discordPresence.instance = 1;
-		discordPresence.startTimestamp = result;
-		discordPresence.endTimestamp = result + (savedlength - seek);
+
+		if (preferences::get_elapsed()) {
+			discordPresence.startTimestamp = foostarttime;
+		}
+		else {
+			discordPresence.startTimestamp = result;
+			discordPresence.endTimestamp = result + (savedlength - seek);
+		}
+
 		Discord_UpdatePresence(&discordPresence);
 	}
 }
@@ -151,8 +167,15 @@ void UpdatePresenceResumed() {
 			discordPresence.state = savedartist;
 		}
 		discordPresence.instance = 1;
-		discordPresence.startTimestamp = result;
-		discordPresence.endTimestamp = result + (savedlength - played);
+
+		if (preferences::get_elapsed()) {
+			discordPresence.startTimestamp = foostarttime;
+		}
+		else {
+			discordPresence.startTimestamp = result;
+			discordPresence.endTimestamp = result + (savedlength - played);
+		}
+
 		Discord_UpdatePresence(&discordPresence);
 	}
 }
@@ -179,6 +202,11 @@ void UpdatePresencePaused() {
 		else {
 			discordPresence.state = savedartist;
 		}
+
+		if (preferences::get_elapsed()) {
+			discordPresence.startTimestamp = foostarttime;
+		}
+
 		discordPresence.instance = 1;
 		Discord_UpdatePresence(&discordPresence);
 	}
@@ -200,6 +228,9 @@ void UpdatePresenceStopped()
 				discordPresence.largeImageText = "Foobar2000";
 				discordPresence.details = "Stopped";
 				discordPresence.instance = 1;
+				if (preferences::get_elapsed()) {
+					discordPresence.startTimestamp = foostarttime;
+				}
 				Discord_UpdatePresence(&discordPresence);
 			}
 			else {
@@ -223,6 +254,9 @@ void UpdatePresenceStopped()
 					discordPresence.state = savedartist;
 				}
 				discordPresence.instance = 1;
+				if (preferences::get_elapsed()) {
+					discordPresence.startTimestamp = foostarttime;
+				}
 				Discord_UpdatePresence(&discordPresence);
 			}
 		}
