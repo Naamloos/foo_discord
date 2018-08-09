@@ -9,7 +9,7 @@ Adds the ability for foobar2000 to interact with Discord rich presences.
 
 ### Installing
 ---------
-Open your `Components` screen in foobar2000 and drop `foo_discord.zip` on it.
+Open your `Components` screen in foobar2000 and extract the files of `foo_discord.zip` on it.
 
 Downloads are available at the [releases](https://github.com/NaamloosDT/foo_discord/releases) tab.
 
