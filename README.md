@@ -24,7 +24,7 @@ If you like this, please consider [buying me a coffee](https://ko-fi.com/naamloo
 #### Windows:
 
 Compilation requires Windows 10 SDK version 10.0.10240.0 or higher.
- - Open the provided solution file (foobar2000/foo_discord/foo_discord.sln) in Visual Studio.
+ - Open the provided solution file (foobar2000/foo_mediacontrol/foo_discord.sln) in Visual Studio.
  - Change the target to "Release" and platform to "x86".
  - Build the solution (Default: Ctrl+Shift+B).
  - Move the resulting foo_discord.dll as well as discord-rpc to your foobar2000 components folder.
