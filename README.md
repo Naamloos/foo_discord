@@ -32,7 +32,7 @@ Compilation requires Windows 10 SDK version 10.0.10240.0 or higher.
  
 ### Support / Contact
 ---------------------
-Naamloos#2887 on Discord, or join my [server](https://discord.gg/hMRWUTa).
+Join my [server](https://discord.gg/hMRWUTa).
 
 ### License
 -----------
