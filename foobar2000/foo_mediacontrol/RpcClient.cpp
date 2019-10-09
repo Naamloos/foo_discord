@@ -50,8 +50,7 @@ void RpcClient::UpdatePresence() {
 	}
 
 	// Create a new DiscordRichPresence instance.
-	DiscordRichPresence drp;
-	memset(&drp, 0, sizeof(drp));
+	drp = DiscordRichPresence();
 
 	// Set all fields of the presence to their respective values.
 	drp.details = details;
@@ -81,8 +80,7 @@ void RpcClient::SetArtistName(wchar_t* artistname, wchar_t* albumname) {
 		std::string artist = std::string(util::wide_to_utf8(artistname));
 		std::string album = std::string(albumcopy);
 		std::string fulltxt = artist + " [" + album + "]";
-
-		state = (char*)fulltxt.c_str();
+		state = fulltxt.data();
 	}
 	else {
 		state = util::wide_to_utf8(artistname);
@@ -132,7 +130,7 @@ void RpcClient::SetPlay() {
 void RpcClient::SetPause() {
 	smallimagekey = "pause";
 	smallimagetext = "Paused";
-	pausetime = (double)time(nullptr);
+	pausetime = time(nullptr);
 	hasTimer = false;
 }
 
@@ -161,7 +159,7 @@ bool RpcClient::IsInitialized()
 }
 
 // Gets the current art type.
-char* RpcClient::getArtType() {
+const char* RpcClient::getArtType() {
 	int arttype = preferences::get_art_type();
 
 	if (arttype == 1) {

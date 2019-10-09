@@ -28,7 +28,7 @@ public:
 	static RpcClient rpc;
 
 private:
-	char* getArtType();
+	const char* getArtType();
 	bool hasTimer = false;
 	bool initialized = false;
 	double songlength = 0;
@@ -36,14 +36,15 @@ private:
 	double starttime = 0;
 	double foostarttime = 0;
 
-	char* smallimagekey;
-	char* largeimagekey;
-	char* smallimagetext;
-	char* largeimagetext;
-	char* state;
-	char* details;
+	const char* smallimagekey;
+	const char* largeimagekey;
+	const char* smallimagetext;
+	const char* largeimagetext;
+	const char* state;
+	const char* details;
 	double start;
 	double end;
 
 	char* albumcopy;
+	DiscordRichPresence drp;
 };
