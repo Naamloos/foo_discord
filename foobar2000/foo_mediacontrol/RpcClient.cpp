@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "RpcClient.h"
 #include <sstream>
+using namespace std;
 #define _CRT_SECURE_NO_WARNING
 
 RpcClient RpcClient::rpc;
@@ -50,7 +51,8 @@ void RpcClient::UpdatePresence() {
 	}
 
 	// Create a new DiscordRichPresence instance.
-	drp = DiscordRichPresence();
+	DiscordRichPresence drp;
+	memset(&drp, 0, sizeof(drp));
 
 	// Set all fields of the presence to their respective values.
 	drp.details = details;
@@ -75,17 +77,20 @@ void RpcClient::SetSongName(wchar_t* songname) {
 
 // Sets the artist name and the album name.
 void RpcClient::SetArtistName(wchar_t* artistname, wchar_t* albumname) {
-	if (preferences::get_show_album() && strlen(util::wide_to_utf8(albumname)) > 0) {
-		albumcopy = util::wide_to_utf8(albumname);
-		std::string artist = std::string(util::wide_to_utf8(artistname));
-		std::string album = std::string(albumcopy);
-		std::string fulltxt = artist + " [" + album + "]";
-		state = fulltxt.data();
+	if (preferences::get_show_album() && albumname != 0) {
+		int bufferlen = wcslen(artistname) + wcslen(albumname) + 3;
+		wchar_t* buffer = new wchar_t[bufferlen];
+		wcscpy(buffer, artistname);
+		wcscat(buffer, util::utf8_to_wide(" ["));
+		wcscat(buffer, albumname);
+		wcscat(buffer, util::utf8_to_wide("]"));
+		state = util::wide_to_utf8(buffer);
 	}
 	else {
 		state = util::wide_to_utf8(artistname);
 	}
 }
+
 
 // Sets the timer.
 void RpcClient::SetTimer(double length, bool storelen) {

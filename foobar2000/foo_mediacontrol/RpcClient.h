@@ -13,8 +13,8 @@ public:
 	RpcClient();
 	void Initialize();
 	void UpdatePresence();
-	void SetSongName(wchar_t * songname);
-	void SetArtistName(wchar_t * artistname, wchar_t * albumname);
+	void SetSongName(wchar_t* songname);
+	void SetArtistName(wchar_t* artistname, wchar_t* albumname);
 	void SetTimer(double length, bool storelen);
 	void ResumeTimer();
 	void SeekTimer(double time);
@@ -45,6 +45,5 @@ private:
 	double start;
 	double end;
 
-	char* albumcopy;
-	DiscordRichPresence drp;
+	const char* albumcopy;
 };
