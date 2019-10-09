@@ -13,7 +13,7 @@ Open your `Components` screen in foobar2000 and drop `foo_discord.zip` on it.
 
 Downloads are available at the [releases](https://github.com/NaamloosDT/foo_discord/releases) tab.
 
-If you like this, please consider [buying me a coffee](https://ko-fi.com/naamloos) :^)
+If you like this, please consider [buying me a choccy milque](https://ko-fi.com/naamloos) :^)
 
 ![dl1](https://saiko.is-a-good-waifu.com/0fede1.png)
 
