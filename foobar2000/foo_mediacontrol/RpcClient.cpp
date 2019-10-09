@@ -77,7 +77,7 @@ void RpcClient::SetSongName(wchar_t* songname) {
 
 // Sets the artist name and the album name.
 void RpcClient::SetArtistName(wchar_t* artistname, wchar_t* albumname) {
-	if (preferences::get_show_album() && wcslen(albumname)) {
+	if (preferences::get_show_album() && wcslen(albumname) > 0) {
 		int bufferlen = wcslen(artistname) + wcslen(albumname) + 3;
 		wchar_t* buffer = new wchar_t[bufferlen];
 		wcscpy(buffer, artistname);
