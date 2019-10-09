@@ -1,4 +1,5 @@
 #pragma once
+#include "RpcClient.h"
 
 class playback_listener : private play_callback_impl_base {
 private:

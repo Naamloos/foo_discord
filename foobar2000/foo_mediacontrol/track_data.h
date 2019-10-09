@@ -13,6 +13,7 @@ typedef std::map<const char*, wchar_t*> track_data_map;
 class track_data {
 public:
 	track_data(metadb_handle_ptr metadb_data);
+
 	~track_data();
 
 	inline track_data_map& get() {
@@ -47,10 +48,6 @@ public:
 		return m_name;
 	}
 
-	inline album_art_data::ptr& get_album_art() {
-		return m_album_art;
-	}
-
 	inline double get_track_length() {
 		return tracklength;
 	}
@@ -66,7 +63,6 @@ private:
 		{ QUERY_TRACK_NUMBER, empty }
 	};
 
-	album_art_data::ptr m_album_art = nullptr;
 	wchar_t* m_name;
 	double tracklength;
 

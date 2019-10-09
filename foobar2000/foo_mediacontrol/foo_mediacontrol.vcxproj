@@ -14,7 +14,7 @@
     <ProjectGuid>{85FBFD09-0099-4FE9-9DB6-78DB6F60F817}</ProjectGuid>
     <RootNamespace>foo_discord</RootNamespace>
     <Keyword>Win32Proj</Keyword>
-    <WindowsTargetPlatformVersion>10.0.16299.0</WindowsTargetPlatformVersion>
+    <WindowsTargetPlatformVersion>10.0</WindowsTargetPlatformVersion>
     <ProjectName>foo_discord</ProjectName>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
@@ -22,12 +22,12 @@
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>DynamicLibrary</ConfigurationType>
     <CharacterSet>Unicode</CharacterSet>
-    <PlatformToolset>v141</PlatformToolset>
+    <PlatformToolset>v142</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -112,14 +112,15 @@
     </ClCompile>
     <ClCompile Include="playback_listener.cpp" />
     <ClCompile Include="Preferences.cpp" />
+    <ClCompile Include="RpcClient.cpp" />
     <ClCompile Include="track_data.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Discord.h" />
     <ClInclude Include="playback_listener.h" />
     <ClInclude Include="Preferences.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="resource1.h" />
+    <ClInclude Include="RpcClient.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="track_data.h" />
     <ClInclude Include="util.h" />
