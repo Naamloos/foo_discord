@@ -6,6 +6,8 @@ using namespace std;
 
 RpcClient RpcClient::rpc;
 
+discord::Core* discordCore;
+
 RpcClient::RpcClient()
 {
 }
@@ -14,8 +16,8 @@ RpcClient::RpcClient()
 void RpcClient::Initialize()
 {
 	try{
-		// Initializing Discord's RPC api..
-		Discord_Initialize(BASE_APPID, NULL, 1, NULL);
+		// Initializing a new Discord GameSDK Core client. Indicate that Discord is not required to run this app.
+		discord::Core::Create(BASE_APPID, DiscordCreateFlags_NoRequireDiscord, &discordCore);
 
 		// We're not doing anything yet, so we're idling.
 		details = "Idle";
@@ -51,23 +53,29 @@ void RpcClient::UpdatePresence() {
 	}
 
 	// Create a new DiscordRichPresence instance.
-	DiscordRichPresence drp;
-	memset(&drp, 0, sizeof(drp));
+	discord::Activity presence;
+	memset(&presence, 0, sizeof(presence));
 
 	// Set all fields of the presence to their respective values.
-	drp.details = details;
-	drp.state = state;
+	presence.SetDetails(details);
+	presence.SetState(state);
+	presence.SetApplicationId(BASE_APPID);
+
 	if (hasTimer) {
-		drp.endTimestamp = end;
-		drp.startTimestamp = start;
+		// Get timestamps and set their uh.. timestamps.
+		discord::ActivityTimestamps time = presence.GetTimestamps();
+		time.SetEnd(end);
+		time.SetStart(start);
 	}
-	drp.largeImageKey = largeimagekey;
-	drp.largeImageText = largeimagetext;
-	drp.smallImageKey = smallimagekey;
-	drp.smallImageText = smallimagetext;
+
+	discord::ActivityAssets assets = presence.GetAssets();
+	assets.SetLargeImage(largeimagekey);
+	assets.SetLargeText(largeimagetext);
+	assets.SetSmallImage(smallimagekey);
+	assets.SetSmallText(smallimagetext);
 
 	// Update values.
-	Discord_UpdatePresence(&drp);
+	discordCore->ActivityManager().UpdateActivity(presence, [](discord::Result result) {}); // don't really care about the result as of right now.
 }
 
 // Sets a new song name.
@@ -154,7 +162,7 @@ void RpcClient::SetStop() {
 // Disconnects Discord RPC
 void RpcClient::Disconnect() 
 {
-	Discord_Shutdown();
+	discordCore->~Core();
 }
 
 // Indicated whether this RpcClient was initialized.
@@ -191,5 +199,5 @@ const char* RpcClient::getArtType() {
 
 RpcClient::~RpcClient()
 {
-	Discord_Shutdown();
+	discordCore->~Core();
 }

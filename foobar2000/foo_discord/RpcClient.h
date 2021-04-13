@@ -5,7 +5,8 @@
 #include "util.h"
 #include "preferences.h"
 #include <ctime>
-#define BASE_APPID "379748462377566219"
+#include "../../include/discord.h"
+#define BASE_APPID 379748462377566219
 
 class RpcClient
 {
