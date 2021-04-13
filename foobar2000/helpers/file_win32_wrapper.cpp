@@ -1,6 +1,9 @@
 #include "stdafx.h"
 
 #ifdef _WIN32
+
+#include "file_win32_wrapper.h"
+
 namespace file_win32_helpers {
 	t_filesize get_size(HANDLE p_handle) {
 		union {
@@ -71,7 +74,7 @@ namespace file_win32_helpers {
 	}
 
 	void writeOverlapped(HANDLE handle, HANDLE myEvent, t_filesize & position, const void * in, size_t inBytes, abort_callback & abort) {
-		const enum {writeMAX = 16*1024*1024};
+		enum {writeMAX = 16*1024*1024};
 		size_t done = 0;
 		while(done < inBytes) {
 			size_t delta = inBytes - done;
@@ -82,7 +85,7 @@ namespace file_win32_helpers {
 		}
 	}
 	void writeStreamOverlapped(HANDLE handle, HANDLE myEvent, const void * in, size_t inBytes, abort_callback & abort) {
-		const enum {writeMAX = 16*1024*1024};
+		enum {writeMAX = 16*1024*1024};
 		size_t done = 0;
 		while(done < inBytes) {
 			size_t delta = inBytes - done;
@@ -137,7 +140,7 @@ namespace file_win32_helpers {
 		throw exception_aborted();
 	}
 	size_t readOverlapped(HANDLE handle, HANDLE myEvent, t_filesize & position, void * out, size_t outBytes, abort_callback & abort) {
-		const enum {readMAX = 16*1024*1024};
+		enum {readMAX = 16*1024*1024};
 		size_t done = 0;
 		while(done < outBytes) {
 			size_t delta = outBytes - done;
@@ -151,7 +154,7 @@ namespace file_win32_helpers {
 	}
 
 	size_t readStreamOverlapped(HANDLE handle, HANDLE myEvent, void * out, size_t outBytes, abort_callback & abort) {
-		const enum {readMAX = 16*1024*1024};
+		enum {readMAX = 16*1024*1024};
 		size_t done = 0;
 		while(done < outBytes) {
 			size_t delta = outBytes - done;
@@ -232,6 +235,44 @@ namespace file_win32_helpers {
 			return data.hResult;
 		}
 #endif
+	}
+
+	size_t lowLevelIO(HANDLE hFile, const GUID & guid, size_t arg1, void * arg2, size_t arg2size, bool canWrite, abort_callback & abort) {
+		if ( guid == file_lowLevelIO::guid_flushFileBuffers ) {
+			if (!canWrite) {
+				PFC_ASSERT(!"File opened for reading, not writing");
+				throw exception_io_denied();
+			}
+			WIN32_IO_OP( ::FlushFileBuffers(hFile) );
+			return 1;
+		} else if ( guid == file_lowLevelIO::guid_getFileTimes ) {
+			if ( arg2size == sizeof(file_lowLevelIO::filetimes_t) ) {
+				if (canWrite) WIN32_IO_OP(::FlushFileBuffers(hFile));
+				auto ft = reinterpret_cast<file_lowLevelIO::filetimes_t *>(arg2);
+				static_assert(sizeof(t_filetimestamp) == sizeof(FILETIME), "struct sanity");
+				WIN32_IO_OP( GetFileTime( hFile, (FILETIME*)&ft->creation, (FILETIME*)&ft->lastAccess, (FILETIME*)&ft->lastWrite) );
+				return 1;
+			}
+		} else if ( guid == file_lowLevelIO::guid_setFileTimes ) {
+			if (arg2size == sizeof(file_lowLevelIO::filetimes_t)) {
+				if (!canWrite) {
+					PFC_ASSERT(!"File opened for reading, not writing");
+					throw exception_io_denied();
+				}
+				WIN32_IO_OP(::FlushFileBuffers(hFile));
+				auto ft = reinterpret_cast<file_lowLevelIO::filetimes_t *>(arg2);
+				static_assert(sizeof(t_filetimestamp) == sizeof(FILETIME), "struct sanity");
+				const FILETIME * pCreation = nullptr;
+				const FILETIME * pLastAccess = nullptr;
+				const FILETIME * pLastWrite = nullptr;
+				if ( ft->creation != filetimestamp_invalid ) pCreation = (const FILETIME*)&ft->creation;
+				if ( ft->lastAccess != filetimestamp_invalid ) pLastAccess = (const FILETIME*)&ft->lastAccess;
+				if ( ft->lastWrite != filetimestamp_invalid ) pLastWrite = (const FILETIME*)&ft->lastWrite;
+				WIN32_IO_OP( SetFileTime(hFile, pCreation, pLastAccess, pLastWrite) );
+				return 1;
+			}
+		}
+		return 0;
 	}
 
 }

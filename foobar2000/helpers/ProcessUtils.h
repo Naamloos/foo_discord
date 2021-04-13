@@ -1,4 +1,8 @@
-#ifdef _WIN32
+#pragma once
+
+#ifdef FOOBAR2000_DESKTOP_WINDOWS
+
+#include <libPPUI/win32_op.h>
 
 namespace ProcessUtils {
 	class PipeIO : public stream_reader, public stream_writer {
@@ -158,7 +162,7 @@ namespace ProcessUtils {
 				try {
 					WIN32_OP( CreateProcess(pfc::stringcvt::string_os_from_utf8(ExePath), NULL, NULL, NULL, TRUE, 0, NULL, NULL, &si, &pi) );
 				} catch(std::exception const & e) {
-					throw failure(pfc::string_formatter() << "Could not start the worker process - " << e);
+					throw failure(PFC_string_formatter() << "Could not start the worker process - " << e);
 				}
 				hProcess = pi.hProcess; _Close(pi.hThread);
 			} catch(...) {
@@ -206,7 +210,7 @@ namespace ProcessUtils {
 				if (!bDetach) {
 					if (WaitForSingleObject(hProcess, TimeOutMS) != WAIT_OBJECT_0) {
 						//PFC_ASSERT( !"Should not get here - worker stuck" );
-						console::formatter() << pfc::string_filename_ext(ExePath) << " unresponsive - terminating";
+						FB2K_console_formatter() << pfc::string_filename_ext(ExePath) << " unresponsive - terminating";
 						TerminateProcess(hProcess, -1);
 					}
 				}
@@ -226,7 +230,7 @@ namespace ProcessUtils {
 		static pfc::string_formatter makePipeName() {
 			GUID id;
 			CoCreateGuid (&id);
-			return pfc::string_formatter() << "\\\\.\\pipe\\" << pfc::print_guid(id);
+			return PFC_string_formatter() << "\\\\.\\pipe\\" << pfc::print_guid(id);
 		}
 
 		static void myCreatePipeOut(HANDLE & in, HANDLE & out) {
@@ -271,5 +275,5 @@ namespace ProcessUtils {
 	};
 }
 
-#endif // _WIN32
+#endif // FOOBAR2000_DESKTOP_WINDOWS
 

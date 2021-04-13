@@ -1,6 +1,9 @@
 # foo_discord
 Adds the ability for foobar2000 to interact with Discord rich presences.
 
+## Note
+This addon uses a modified version of the foobar2000 SDK. This SDK is located [here](https://github.com/marc2k3/foobar2000-sdk).
+
 ### Screenshots
 ---------
 ![Screenshot1](https://saiko.is-a-good-waifu.com/ba6062.png)

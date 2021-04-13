@@ -1,3 +1,7 @@
+#pragma once
+
+#include <functional>
+
 #define tabsize(x) ((size_t)(sizeof(x)/sizeof(*x)))
 #define PFC_TABSIZE(x) ((size_t)(sizeof(x)/sizeof(*x)))
 
@@ -714,11 +718,32 @@ namespace pfc {
 
 
 
+	template<typename array_t, typename pred_t>
+	inline size_t remove_if_t( array_t & arr, pred_t pred ) {
+		const size_t inCount = arr.size();
+		size_t walk = 0;
+
+
+		for( walk = 0; walk < inCount; ++ walk ) {
+			if ( pred(arr[walk]) ) break;
+		}
+
+		size_t total = walk;
+
+		for( ; walk < inCount; ++ walk ) {
+			if ( !pred(arr[walk] ) ) {
+				move_t(arr[total++], arr[walk]);
+			}
+		}
+		arr.resize(total);
+
+		return total;
+	}
 
 	template<typename t_array>
 	inline t_size remove_mask_t(t_array & p_array,const bit_array & p_mask)//returns amount of items left
 	{
-		t_size n,count = p_array.get_size(), total = 0;
+		t_size n,count = p_array.size(), total = 0;
 
 		n = total = p_mask.find(true,0,count);
 
@@ -727,7 +752,7 @@ namespace pfc {
 			for(n=p_mask.find(false,n+1,count-n-1);n<count;n=p_mask.find(false,n+1,count-n-1))
 				move_t(p_array[total++],p_array[n]);
 
-			p_array.set_size(total);
+			p_array.resize(total);
 			
 			return total;
 		}
@@ -871,12 +896,38 @@ namespace pfc {
 
 	template<typename t_array,typename t_value>
 	void fill_array_t(t_array & p_array,const t_value & p_value);
+
+	// Generic no-op for breakpointing stuff
+	inline void nop() {}
+
+	class onLeaving {
+	public:
+		onLeaving() {}
+		onLeaving( std::function<void () > f_ ) : f(f_) {}
+		~onLeaving() {
+			if (f) f();
+		}
+		std::function<void () > f;
+	private:
+		void operator=( onLeaving const & ) = delete;
+		onLeaving( const onLeaving & ) = delete;
+	};
+
+	template<typename obj_t>
+	class singleton {
+	public:
+		static obj_t instance;
+	};
+	template<typename obj_t>
+	obj_t singleton<obj_t>::instance;
+
 };
+#define PFC_SINGLETON(X) ::pfc::singleton<X>::instance
 
 
 #define PFC_CLASS_NOT_COPYABLE(THISCLASSNAME,THISTYPE) \
 	private:	\
-	THISCLASSNAME(const THISTYPE&); \
-	const THISTYPE & operator=(const THISTYPE &);
+	THISCLASSNAME(const THISTYPE&) = delete; \
+	const THISTYPE & operator=(const THISTYPE &) = delete;
 
 #define PFC_CLASS_NOT_COPYABLE_EX(THISTYPE) PFC_CLASS_NOT_COPYABLE(THISTYPE,THISTYPE)

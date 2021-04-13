@@ -1,3 +1,5 @@
+#pragma once
+
 //! Reserved for future use.
 typedef void * t_glyph;
 
@@ -121,6 +123,7 @@ public:
 	//! Return DEFAULT_ON to show this item in the context menu by default - useful for most cases. \n
 	//! Return DEFAULT_OFF to hide this item in the context menu by default - useful for rarely used utility commands. \n
 	//! Return FORCE_OFF to hide this item by default and prevent the user from making it visible (very rarely used). \n
+	//! foobar2000 v1.6 and newer: FORCE_OFF items are meant for being shown only in the keyboard shortcut list, not anywhere else. \n
 	//! Values returned by this method should be constant for this context menu item and not change later. Do not use this to conditionally hide the item - return false from get_display_data() instead.
 	virtual t_enabled_state get_enabled_state(unsigned p_index) = 0;
 	//! Executes the menu item command without going thru the instantiate_item path. For items with dynamically-generated sub-items, p_node is identifies of the sub-item command to execute.
@@ -250,6 +253,7 @@ class contextmenu_item_factory_t : public service_factory_single_t<T> {};
 //! New in 0.9.5.1. Static methods safe to use in prior versions as it will use slow fallback mode when the service isn't present. \n
 //! Functionality provided by menu_item_resolver methods isn't much different from just walking all registered contextmenu_item / mainmenu_commands implementations to find the command we want, but it uses a hint map to locate the service we're looking for without walking all of them which may be significantly faster in certain scenarios.
 class menu_item_resolver : public service_base {
+	FB2K_MAKE_SERVICE_COREAPI(menu_item_resolver)
 public:
 	virtual bool resolve_context_command(const GUID & id, service_ptr_t<class contextmenu_item> & out, t_uint32 & out_index) = 0;
 	virtual bool resolve_main_command(const GUID & id, service_ptr_t<class mainmenu_commands> & out, t_uint32 & out_index) = 0;
@@ -257,7 +261,7 @@ public:
 	static bool g_resolve_context_command(const GUID & id, service_ptr_t<class contextmenu_item> & out, t_uint32 & out_index);
 	static bool g_resolve_main_command(const GUID & id, service_ptr_t<class mainmenu_commands> & out, t_uint32 & out_index);
 
-	FB2K_MAKE_SERVICE_INTERFACE_ENTRYPOINT(menu_item_resolver)
+	
 };
 
 //! \since 1.0

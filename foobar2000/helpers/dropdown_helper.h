@@ -1,7 +1,6 @@
-#ifdef _WIN32
+#pragma once
 
-#ifndef _DROPDOWN_HELPER_H_
-#define _DROPDOWN_HELPER_H_
+#ifdef FOOBAR2000_DESKTOP_WINDOWS
 
 class _cfg_dropdown_history_base
 {
@@ -17,6 +16,7 @@ public:
 		add_item(initVal); setup_dropdown(ctrl); uSetWindowText(ctrl, initVal);
 	}
 	void setup_dropdown(HWND wnd);
+	void setup_dropdown_set_value(HWND wnd);
 	void setup_dropdown(HWND wnd,UINT id) {setup_dropdown(GetDlgItem(wnd,id));}
 	bool add_item(const char * item); //returns true when the content has changed, false when not (the item was already on the list)
 	bool add_item(const char * item, HWND combobox); //immediately adds the item to the combobox
@@ -53,6 +53,4 @@ private:
 		}	\
 	}
 
-#endif //_DROPDOWN_HELPER_H_
-
-#endif // _WIN32
+#endif // FOOBAR2000_DESKTOP_WINDOWS

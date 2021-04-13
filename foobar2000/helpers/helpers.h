@@ -1,6 +1,7 @@
-#ifndef _FOOBAR2000_SDK_HELPERS_H_
-#define _FOOBAR2000_SDK_HELPERS_H_
+#pragma once
+// #pragma message("Avoid using this header. #include individual ones instead.")
 
+#include "duration_counter.h"
 #include "input_helpers.h"
 #include "create_directory_helper.h"
 #include "dialog_resize_helper.h"
@@ -12,7 +13,6 @@
 #include "cue_parser.h"
 #include "text_file_loader.h"
 #include "file_list_helper.h"
-#include "listview_helper.h"
 #include "stream_buffer_helper.h"
 #include "file_info_const_impl.h"
 #include "dynamic_bitrate_helper.h"
@@ -20,7 +20,6 @@
 #include "file_move_helper.h"
 #include "file_cached.h"
 #include "seekabilizer.h"
-#include "string_filter.h"
 #include "bitreader_helper.h"
 #include "mp3_utils.h"
 #include "win32_misc.h"
@@ -29,8 +28,6 @@
 #include "metadb_io_hintlist.h"
 #include "meta_table_builder.h"
 #include "icon_remapping_wildcard.h"
-#include "clipboard.h"
-#include "IDataObjectUtils.h"
 #include "CallForwarder.h"
 #include "playlist_position_reference_tracker.h"
 #include "ThreadUtils.h"	
@@ -40,7 +37,5 @@
 #include "ProfileCache.h"
 #include "file_win32_wrapper.h"
 #include "fullFileBuffer.h"
-#include "CPowerRequest.h"
 #include "writer_wav.h"
-
-#endif //_FOOBAR2000_SDK_HELPERS_H_
+#include "readers.h"

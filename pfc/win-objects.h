@@ -1,3 +1,5 @@
+#pragma once
+
 namespace pfc {
 	BOOL winFormatSystemErrorMessage(pfc::string_base & p_out,DWORD p_code);
 
@@ -5,17 +7,26 @@ namespace pfc {
 	void winPrefixPath(pfc::string_base & out, const char * p_path);
 	// Reverse winPrefixPath
 	void winUnPrefixPath(pfc::string_base & out, const char * p_path);
+
+	string8 winPrefixPath( const char * in );
+	string8 winUnPrefixPath( const char * in );
+
+	class LastErrorRevertScope {
+	public:
+		LastErrorRevertScope() : m_val(GetLastError()) {}
+		~LastErrorRevertScope() { SetLastError(m_val); }
+
+	private:
+		const DWORD m_val;
+	};
+
+	string8 getWindowText(HWND wnd);
+	void setWindowText(HWND wnd, const char * txt); 
+	string8 getWindowClassName( HWND wnd );
+	HWND findOwningPopup(HWND wnd);
 }
 
 
-class LastErrorRevertScope {
-public:
-	LastErrorRevertScope() : m_val(GetLastError()) {}
-	~LastErrorRevertScope() {SetLastError(m_val);}
-
-private:
-	const DWORD m_val;
-};
 
 class format_win32_error {
 public:
@@ -39,7 +50,8 @@ private:
 	pfc::string_formatter m_buffer;
 };
 
-struct exception_win32 : public std::exception {
+class exception_win32 : public std::exception {
+public:
 	exception_win32(DWORD p_code) : std::exception(format_win32_error(p_code)), m_code(p_code) {}
 	DWORD get_code() const {return m_code;}
 private:
@@ -96,8 +108,15 @@ private:
 	CGlobalLockScope m_scope;
 };
 
+//! Resigns active window status passing it to the parent window, if wnd or a child popup of is active. \n
+//! Use this to mitigate Windows 10 1809 active window handling bugs - call prior to DestroyWindow()
+void ResignActiveWindow(HWND wnd);
+//! Is point inside a control?
 bool IsPointInsideControl(const POINT& pt, HWND wnd);
+//! Is <child> a control inside <parent> window? Also returns true if child==parent.
 bool IsWindowChildOf(HWND child, HWND parent);
+//! Is <child> window a child (popup or control) of <parent> window? Also returns true if child==parent.
+bool IsPopupWindowChildOf(HWND child, HWND parent);
 
 class win32_menu {
 public:
@@ -112,8 +131,8 @@ public:
 	
 	bool is_valid() const {return m_menu != NULL;}
 private:
-	win32_menu(const win32_menu &);
-	const win32_menu & operator=(const win32_menu &);
+	win32_menu(const win32_menu &) = delete;
+	void operator=(const win32_menu &) = delete;
 
 	HMENU m_menu;
 };
@@ -144,13 +163,14 @@ public:
 	static bool g_wait_for(HANDLE p_event,double p_timeout_seconds);
 
 	void set_state(bool p_state);
+	bool is_set() { return wait_for(0); }
 
     // Two-wait event functions, return 0 on timeout, 1 on evt1 set, 2 on evt2 set
     static int g_twoEventWait( win32_event & ev1, win32_event & ev2, double timeout );
     static int g_twoEventWait( HANDLE ev1, HANDLE ev2, double timeout );
 private:
-	win32_event(const win32_event&);
-	const win32_event & operator=(const win32_event &);
+	win32_event(const win32_event&) = delete;
+	void operator=(const win32_event &) = delete;
 
 	HANDLE m_handle;
 };
@@ -174,8 +194,8 @@ public:
 	bool is_valid() const {return m_icon != NULL;}
 
 private:
-	win32_icon(const win32_icon&) {throw pfc::exception_not_implemented();}
-	const win32_icon & operator=(const win32_icon &) {throw pfc::exception_not_implemented();}
+	win32_icon(const win32_icon&) = delete;
+	const win32_icon & operator=(const win32_icon &) = delete;
 
 	HICON m_icon;
 };
@@ -190,7 +210,7 @@ public:
 	void release();
 private:
 	HACCEL m_accel;
-	PFC_CLASS_NOT_COPYABLE(win32_accelerator,win32_accelerator);
+	PFC_CLASS_NOT_COPYABLE_EX(win32_accelerator);
 };
 
 class SelectObjectScope {
@@ -249,11 +269,12 @@ WORD GetWindowsVersionCode() throw();
 //! Simple implementation of a COM reference counter. The initial reference count is zero, so it can be used with pfc::com_ptr_t<> with plain operator=/constructor rather than attach().
 template<typename TBase> class ImplementCOMRefCounter : public TBase {
 public:
-	TEMPLATE_CONSTRUCTOR_FORWARD_FLOOD(ImplementCOMRefCounter,TBase)
-	ULONG STDMETHODCALLTYPE AddRef() {
+    template<typename ... arg_t> ImplementCOMRefCounter(arg_t && ... arg) : TBase(std::forward<arg_t>(arg) ...) {}
+
+	ULONG STDMETHODCALLTYPE AddRef() override {
 		return ++m_refcounter;
 	}
-	ULONG STDMETHODCALLTYPE Release() {
+	ULONG STDMETHODCALLTYPE Release() override {
 		long val = --m_refcounter;
 		if (val == 0) delete this;
 		return val;
@@ -285,13 +306,12 @@ namespace pfc {
     bool isCtrlKeyPressed();
     bool isAltKeyPressed();
 
-
 	class winHandle {
 	public:
 		winHandle(HANDLE h_ = INVALID_HANDLE_VALUE) : h(h_) {}
 		~winHandle() { Close(); }
 		void Close() {
-			if (h != INVALID_HANDLE_VALUE) { CloseHandle(h); h = INVALID_HANDLE_VALUE; }
+			if (h != INVALID_HANDLE_VALUE && h != NULL ) { CloseHandle(h); h = INVALID_HANDLE_VALUE; }
 		}
 
 		void Attach(HANDLE h_) { Close(); h = h_; }
@@ -302,8 +322,20 @@ namespace pfc {
 
 		HANDLE h;
 	private:
-		winHandle(const winHandle&);
-		void operator=(const winHandle&);
+		winHandle(const winHandle&) = delete;
+		void operator=(const winHandle&) = delete;
 	};
-}
+    
+    void winSleep( double seconds );
+    void sleepSeconds(double seconds);
+    void yield();
 
+#ifdef PFC_WINDOWS_DESKTOP_APP
+	void winSetThreadDescription(HANDLE hThread, const wchar_t * desc);
+
+#if PFC_DEBUG
+#define PFC_SET_THREAD_DESCRIPTION(msg) ::pfc::winSetThreadDescription(GetCurrentThread(), L##msg);
+#define PFC_SET_THREAD_DESCRIPTION_SUPPORTED
+#endif // PFC_DEBUG
+#endif // PFC_WINDOWS_DESKTOP_APP
+}

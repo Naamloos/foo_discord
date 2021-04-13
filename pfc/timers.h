@@ -1,5 +1,4 @@
-#ifndef _PFC_PROFILER_H_
-#define _PFC_PROFILER_H_
+#pragma once
 
 #if defined(_MSC_VER) && (defined(_M_IX86) || defined(_M_X64))
 
@@ -43,14 +42,9 @@ namespace pfc {
 #ifdef _WIN32
 
 namespace pfc {
-#if _WIN32_WINNT >= 0x600
-typedef uint64_t tickcount_t;
-inline tickcount_t getTickCount() { return GetTickCount64(); }
-#else
-#define PFC_TICKCOUNT_32BIT
-typedef uint32_t tickcount_t;
-inline tickcount_t getTickCount() { return GetTickCount(); }
-#endif
+	// ALWAYS define 64bit tickcount - don't cause mayhem if different modules are compiled for different Windows versions
+	typedef uint64_t tickcount_t;
+	inline tickcount_t getTickCount() { return GetTickCount64(); }
 
 class hires_timer {
 public:
@@ -67,7 +61,7 @@ public:
 		m_start = current;
 		return ret;
 	}
-	pfc::string8 queryString(unsigned precision = 6) {
+	pfc::string8 queryString(unsigned precision = 6) const {
 		return pfc::format_time_ex( query(), precision ).get_ptr();
 	}
 private:
@@ -89,7 +83,7 @@ private:
 
 class lores_timer {
 public:
-    lores_timer() : m_start() {}
+	lores_timer() {}
 	void start() {
 		_start(getTickCount());
 	}
@@ -103,30 +97,17 @@ public:
 		_start(time);
 		return ret;
 	}
-	pfc::string8 queryString(unsigned precision = 3) {
+	pfc::string8 queryString(unsigned precision = 3) const {
 		return pfc::format_time_ex( query(), precision ).get_ptr();
 	}
 private:
 	void _start(tickcount_t p_time) {
-#ifdef PFC_TICKCOUNT_32BIT
-		m_last_seen = p_time;
-#endif
 		m_start = p_time;
 	}
 	double _query(tickcount_t p_time) const {
-#ifdef PFC_TICKCOUNT_32BIT
-		t_uint64 time = p_time;
-		if (time < (m_last_seen & 0xFFFFFFFF)) time += 0x100000000;
-		m_last_seen = (m_last_seen & 0xFFFFFFFF00000000) + time;
-		return (double)(m_last_seen - m_start) / 1000.0;
-#else
 		return (double)(p_time - m_start) / 1000.0;
-#endif
 	}
-	t_uint64 m_start;
-#ifdef PFC_TICKCOUNT_32BIT
-	mutable t_uint64 m_last_seen;
-#endif
+	t_uint64 m_start = 0;
 };
 }
 #else  // not _WIN32
@@ -139,7 +120,7 @@ public:
     void start();
     double query() const;
     double query_reset();
-	pfc::string8 queryString(unsigned precision = 3);
+	pfc::string8 queryString(unsigned precision = 3) const;
 private:
     double m_start;
 };
@@ -162,5 +143,3 @@ namespace pfc {
 #endif
 	uint64_t fileTimeNow();
 }
-
-#endif

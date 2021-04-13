@@ -1,3 +1,7 @@
+#pragma once
+
+#include <functional>
+
 //! Common class for handling picture data. \n
 //! Type of contained picture data is unknown and to be determined according to memory block contents by code parsing/rendering the picture. Commonly encountered types are: BMP, PNG, JPEG and GIF. \n
 //! Implementation: use album_art_data_impl.
@@ -21,6 +25,9 @@ public:
 };
 
 typedef service_ptr_t<album_art_data> album_art_data_ptr;
+namespace fb2k {
+	typedef album_art_data_ptr memBlockRef;
+}
 
 //! Namespace containing identifiers of album art types.
 namespace album_art_ids {
@@ -35,6 +42,14 @@ namespace album_art_ids {
 	//! Artist picture.
 	static const GUID artist = { 0x9a654042, 0xacd1, 0x43f7, { 0xbf, 0xcf, 0xd3, 0xec, 0xf, 0xfe, 0x40, 0xfa } };
 
+	size_t num_types();
+	GUID query_type( size_t );
+	// returns lowercase name
+	const char * query_name( size_t );
+	const char * name_of( const GUID & );
+	// returns Capitalized name
+	const char * query_capitalized_name( size_t );
+	const char * capitalized_name_of( const GUID & );
 };
 
 PFC_DECLARE_EXCEPTION(exception_album_art_not_found,exception_io_not_found,"Attached picture not found");
@@ -49,9 +64,8 @@ public:
 	//! Throws exception_album_art_not_found when the requested album art entry could not be found in the referenced media file.
 	virtual album_art_data_ptr query(const GUID & p_what,abort_callback & p_abort) = 0;
 
-	bool query(const GUID & what, album_art_data::ptr & out, abort_callback & abort) {
-		try { out = query(what, abort); return true; } catch(exception_album_art_not_found) { return false; }
-	}
+	bool have_entry( const GUID & what, abort_callback & abort );
+	bool query(const GUID & what, album_art_data::ptr & out, abort_callback & abort);
 };
 
 //! Class encapsulating access to album art stored in a media file. Use album_art_editor class to obtain album_art_editor_instance referring to specified media file.
@@ -66,6 +80,9 @@ public:
 
 	//! Finalizes file tag update operation.
 	virtual void commit(abort_callback & p_abort) = 0;
+
+	//! Helper; see album_art_editor_instance_v2::remove_all();
+	void remove_all_();
 };
 
 class NOVTABLE album_art_editor_instance_v2 : public album_art_editor_instance {
@@ -81,6 +98,7 @@ typedef service_ptr_t<album_art_editor_instance> album_art_editor_instance_ptr;
 //! Entrypoint class for accessing album art extraction functionality. Register your own implementation to allow album art extraction from your media file format. \n
 //! If you want to extract album art from a media file, it's recommended that you use album_art_manager API instead of calling album_art_extractor directly.
 class NOVTABLE album_art_extractor : public service_base {
+	FB2K_MAKE_SERVICE_INTERFACE_ENTRYPOINT(album_art_extractor);
 public:
 	//! Returns whether the specified file is one of formats supported by our album_art_extractor implementation.
 	//! @param p_path Path to file being queried.
@@ -97,11 +115,21 @@ public:
 	static album_art_extractor_instance_ptr g_open(file_ptr p_filehint,const char * p_path,abort_callback & p_abort);
 	static album_art_extractor_instance_ptr g_open_allowempty(file_ptr p_filehint,const char * p_path,abort_callback & p_abort);
 
-	FB2K_MAKE_SERVICE_INTERFACE_ENTRYPOINT(album_art_extractor);
+	//! Returns GUID of the corresponding input class. Null GUID if none.
+	GUID get_guid(); 
+};
+
+//! \since 1.5
+class NOVTABLE album_art_extractor_v2 : public album_art_extractor {
+	FB2K_MAKE_SERVICE_INTERFACE(album_art_extractor_v2 , album_art_extractor);
+public:
+	//! Returns GUID of the corresponding input class. Null GUID if none.
+	virtual GUID get_guid() = 0;
 };
 
 //! Entrypoint class for accessing album art editing functionality. Register your own implementation to allow album art editing on your media file format.
 class NOVTABLE album_art_editor : public service_base {
+	FB2K_MAKE_SERVICE_INTERFACE_ENTRYPOINT(album_art_editor);
 public:
 	//! Returns whether the specified file is one of formats supported by our album_art_editor implementation.
 	//! @param p_path Path to file being queried.
@@ -120,12 +148,22 @@ public:
 
 	static album_art_editor_instance_ptr g_open(file_ptr p_filehint,const char * p_path,abort_callback & p_abort);
 
-	FB2K_MAKE_SERVICE_INTERFACE_ENTRYPOINT(album_art_editor);
+	//! Returns GUID of the corresponding input class. Null GUID if none.
+	GUID get_guid();
 };
 
+//! \since 1.5
+class NOVTABLE album_art_editor_v2 : public album_art_editor {
+	FB2K_MAKE_SERVICE_INTERFACE( album_art_editor_v2, album_art_editor )
+public:
+	//! Returns GUID of the corresponding input class. Null GUID if none.
+	virtual GUID get_guid() = 0;
+};
 
-//! Helper API for extracting album art from APEv2 tags - introduced in 0.9.5.
+//! \since 0.9.5
+//! Helper API for extracting album art from APEv2 tags.
 class NOVTABLE tag_processor_album_art_utils : public service_base {
+	FB2K_MAKE_SERVICE_COREAPI(tag_processor_album_art_utils)
 public:
 
 	//! Throws one of I/O exceptions on failure; exception_album_art_not_found when the file has no album art record at all.
@@ -134,8 +172,6 @@ public:
 	//! \since 1.1.6
 	//! Throws exception_not_implemented on earlier than 1.1.6.
 	virtual album_art_editor_instance_ptr edit(file_ptr p_file,abort_callback & p_abort) = 0;
-
-	FB2K_MAKE_SERVICE_INTERFACE_ENTRYPOINT(tag_processor_album_art_utils)
 };
 
 
@@ -159,7 +195,7 @@ public:
 //! Provides methods for interfacing with the foobar2000 core album art loader. \n
 //! Use this when you need to load album art for a specific group of tracks.
 class NOVTABLE album_art_manager_v2 : public service_base {
-	FB2K_MAKE_SERVICE_INTERFACE_ENTRYPOINT(album_art_manager_v2)
+	FB2K_MAKE_SERVICE_COREAPI(album_art_manager_v2)
 public:
 	//! Instantiates an album art extractor object for the specified group of items.
 	virtual album_art_extractor_instance_v2::ptr open(metadb_handle_list_cref items, pfc::list_base_const_t<GUID> const & ids, abort_callback & abort) = 0;
@@ -189,8 +225,36 @@ public:
 
 //! \since 1.1.7
 class NOVTABLE album_art_manager_v3 : public album_art_manager_v2 {
-	FB2K_MAKE_SERVICE_INTERFACE(album_art_manager_v3, album_art_manager_v2)
+	FB2K_MAKE_SERVICE_COREAPI_EXTENSION(album_art_manager_v3, album_art_manager_v2)
 public:
 	//! @param config An optional album_art_manager_config object to override global settings. Pass null to use global settings.
 	virtual album_art_extractor_instance_v2::ptr open_v3(metadb_handle_list_cref items, pfc::list_base_const_t<GUID> const & ids, album_art_manager_config::ptr config, abort_callback & abort) = 0;
+};
+
+//! \since 1.4
+//! A notification about a newly loaded album art being ready to display. \n
+//! See: now_playing_album_art_notify_manager.
+class NOVTABLE now_playing_album_art_notify {
+public:
+	//! Called when album art has finished loading for the now playing track.
+	//! @param data The newly loaded album art. Never a null object - the callbacks are simply not called when there is nothing to show.
+	virtual void on_album_art( album_art_data::ptr data ) = 0;
+};
+
+//! \since 1.4
+//! Since various components require the album art of the now-playing track, a centralized loader has been provided, so the file isn't hammered independently by different components. \n
+//! Use this in conjunction with play_callback notifications to render now-playing track information.
+class NOVTABLE now_playing_album_art_notify_manager : public service_base {
+	FB2K_MAKE_SERVICE_COREAPI(now_playing_album_art_notify_manager)
+public:
+	//! Register a notification to be told when the album art has been loaded.
+	virtual void add(now_playing_album_art_notify*) = 0;
+	//! Unregister a previously registered notification.
+	virtual void remove(now_playing_album_art_notify*) = 0;
+	//! Retrieves the album art for the currently playing track.
+	//! @returns The current album art (front cover), or null if there is no art or the art is being loaded and is not yet available.
+	virtual album_art_data::ptr current() = 0;
+
+	//! Helper; register a lambda notification. Pass the returned obejct to remove() to unregister.
+	now_playing_album_art_notify* add( std::function<void (album_art_data::ptr) > );
 };

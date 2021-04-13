@@ -8,6 +8,9 @@
 // Global flag - whether it's OK to leak static objects as they'll be released anyway by process death
 #define FB2K_LEAK_STATIC_OBJECTS PFC_LEAK_STATIC_OBJECTS 
 
+#define FB2K_TARGET_MICROSOFT_STORE 0
+#define FB2K_SUPPORT_CRASH_LOGS (!FB2K_TARGET_MICROSOFT_STORE)
+
 #include <signal.h>
 
 #ifndef WIN32
@@ -222,7 +225,7 @@ int SHARED_EXPORT uGetKeyNameText(LONG lparam,pfc::string_base & out);
 void SHARED_EXPORT uFixAmpersandChars(const char * src,pfc::string_base & out);//for notification area icon
 void SHARED_EXPORT uFixAmpersandChars_v2(const char * src,pfc::string_base & out);//for other controls
 
-//deprecated
+#if FB2K_SUPPORT_CRASH_LOGS
 t_size SHARED_EXPORT uPrintCrashInfo(LPEXCEPTION_POINTERS param,const char * extrainfo,char * out);
 enum {uPrintCrashInfo_max_length = 1024};
 
@@ -231,9 +234,10 @@ void SHARED_EXPORT uPrintCrashInfo_SetComponentList(const char * p_info);//calle
 void SHARED_EXPORT uPrintCrashInfo_AddEnvironmentInfo(const char * p_info);//called only by the exe on startup
 void SHARED_EXPORT uPrintCrashInfo_SetDumpPath(const char * name);//called only by the exe on startup
 
+
+#endif // FB2K_SUPPORT_CRASH_LOGS
+
 void SHARED_EXPORT uDumpCrashInfo(LPEXCEPTION_POINTERS param);
-
-
 
 void SHARED_EXPORT uPrintCrashInfo_OnEvent(const char * message, t_size length);
 
@@ -273,7 +277,6 @@ HMODULE SHARED_EXPORT LoadSystemLibrary(const TCHAR * name);
 }//extern "C"
 
 static inline void uAddDebugEvent(const char * msg) {uPrintCrashInfo_OnEvent(msg, strlen(msg));}
-static inline void uAddDebugEvent(pfc::string_formatter const & msg) {uPrintCrashInfo_OnEvent(msg, msg.length());}
 
 inline char * uCharNext(char * src) {return src+uCharLength(src);}
 inline const char * uCharNext(const char * src) {return src+uCharLength(src);}
@@ -539,8 +542,8 @@ public:
 	
 
 private:
-	modal_dialog_scope(const modal_dialog_scope & p_scope) {assert(0);}
-	const modal_dialog_scope & operator=(const modal_dialog_scope &) {assert(0); return *this;}
+	modal_dialog_scope(const modal_dialog_scope & p_scope) = delete;
+	const modal_dialog_scope & operator=(const modal_dialog_scope &) = delete;
 
 	t_modal_dialog_entry m_entry;
 

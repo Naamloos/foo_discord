@@ -1,3 +1,8 @@
+#pragma once
+
+#include <libPPUI/win32_op.h>
+
+#ifdef _WIN32
 namespace file_win32_helpers {
 	t_filesize get_size(HANDLE p_handle);
 	void seek(HANDLE p_handle,t_sfilesize p_position,file::t_seek_mode p_mode);
@@ -9,10 +14,11 @@ namespace file_win32_helpers {
 	size_t readOverlapped(HANDLE handle, HANDLE myEvent, t_filesize & position, void * out, size_t outBytes, abort_callback & abort);
 	size_t readStreamOverlapped(HANDLE handle, HANDLE myEvent, void * out, size_t outBytes, abort_callback & abort);
 	HANDLE createFile(LPCTSTR lpFileName, DWORD dwDesiredAccess, DWORD dwShareMode, LPSECURITY_ATTRIBUTES lpSecurityAttributes, DWORD dwCreationDisposition, DWORD dwFlagsAndAttributes, HANDLE hTemplateFile, abort_callback & abort);
+	size_t lowLevelIO(HANDLE hFile, const GUID & guid, size_t arg1, void * arg2, size_t arg2size, bool canWrite, abort_callback & abort);
 };
 
 template<bool p_seekable,bool p_writeable>
-class file_win32_wrapper_t : public file {
+class file_win32_wrapper_t : public service_multi_inherit<file, file_lowLevelIO> {
 public:
 	file_win32_wrapper_t(HANDLE p_handle) : m_handle(p_handle), m_position(0)
 	{
@@ -57,7 +63,7 @@ public:
 			while(bytes_written_total < p_bytes) {
 				p_abort.check_e();
 				DWORD bytes_written = 0;
-				DWORD delta = (DWORD) pfc::min_t<t_size>(p_bytes - bytes_written_total, 0x80000000);
+				DWORD delta = (DWORD) pfc::min_t<t_size>(p_bytes - bytes_written_total, 0x80000000u);
 				SetLastError(ERROR_SUCCESS);
 				if (!WriteFile(m_handle,(const t_uint8*)p_buffer + bytes_written_total,delta,&bytes_written,0)) exception_io_from_win32(GetLastError());
 				if (bytes_written != delta) throw exception_io("Write failure");
@@ -82,7 +88,7 @@ public:
 			while(bytes_read_total < p_bytes) {
 				p_abort.check_e();
 				DWORD bytes_read = 0;
-				DWORD delta = (DWORD) pfc::min_t<t_size>(p_bytes - bytes_read_total, 0x80000000);
+				DWORD delta = (DWORD) pfc::min_t<t_size>(p_bytes - bytes_read_total, 0x80000000u);
 				SetLastError(ERROR_SUCCESS);
 				if (!ReadFile(m_handle,(t_uint8*)p_buffer + bytes_read_total,delta,&bytes_read,0)) exception_io_from_win32(GetLastError());
 				bytes_read_total += bytes_read;
@@ -136,7 +142,7 @@ public:
 	
 	t_filetimestamp get_timestamp(abort_callback & p_abort) {
 		p_abort.check_e();
-		FlushFileBuffers(m_handle);
+		if (p_writeable) FlushFileBuffers(m_handle);
 		SetLastError(ERROR_SUCCESS);
 		t_filetimestamp temp;
 		if (!GetFileTime(m_handle,0,0,(FILETIME*)&temp)) exception_io_from_win32(GetLastError());
@@ -145,13 +151,17 @@ public:
 
 	bool is_remote() {return false;}
 	~file_win32_wrapper_t() {CloseHandle(m_handle);}
+
+	size_t lowLevelIO(const GUID & guid, size_t arg1, void * arg2, size_t arg2size, abort_callback & abort) override {
+		return file_win32_helpers::lowLevelIO(m_handle, guid, arg1, arg2, arg2size, p_writeable, abort);
+	}
 protected:
 	HANDLE m_handle;
 	t_filesize m_position;
 };
 
 template<bool p_writeable>
-class file_win32_wrapper_overlapped_t : public file {
+class file_win32_wrapper_overlapped_t : public service_multi_inherit< file, file_lowLevelIO > {
 public:
 	file_win32_wrapper_overlapped_t(HANDLE file) : m_handle(file), m_position() {
 		WIN32_OP( (m_event = CreateEvent(NULL, TRUE, FALSE, NULL)) != NULL );
@@ -205,7 +215,7 @@ public:
 	
 	t_filetimestamp get_timestamp(abort_callback & p_abort) {
 		p_abort.check_e();
-		FlushFileBuffers(m_handle);
+		if (p_writeable) FlushFileBuffers(m_handle);
 		SetLastError(ERROR_SUCCESS);
 		t_filetimestamp temp;
 		if (!GetFileTime(m_handle,0,0,(FILETIME*)&temp)) exception_io_from_win32(GetLastError());
@@ -233,7 +243,12 @@ public:
 		return new service_impl_t<file_win32_wrapper_overlapped_t<p_writeable> >(p_handle);
 	}
 
+	size_t lowLevelIO(const GUID & guid, size_t arg1, void * arg2, size_t arg2size, abort_callback & abort) override {
+		return file_win32_helpers::lowLevelIO(m_handle, guid, arg1, arg2, arg2size, p_writeable, abort);
+	}
+
 protected:
 	HANDLE m_event, m_handle;
 	t_filesize m_position;
 };
+#endif // _WIN32

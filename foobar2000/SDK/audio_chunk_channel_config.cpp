@@ -88,32 +88,27 @@ static const unsigned g_audio_channel_config_table[] =
 	audio_chunk::channel_front_left | audio_chunk::channel_front_right | audio_chunk::channel_back_left | audio_chunk::channel_back_right,
 	audio_chunk::channel_front_left | audio_chunk::channel_front_right | audio_chunk::channel_back_left | audio_chunk::channel_back_right | audio_chunk::channel_lfe,
 	audio_chunk::channel_config_5point1,
-	audio_chunk::channel_front_left | audio_chunk::channel_front_right | audio_chunk::channel_back_left | audio_chunk::channel_back_right | audio_chunk::channel_lfe | audio_chunk::channel_front_center_right | audio_chunk::channel_front_center_left,
-	audio_chunk::channel_front_left | audio_chunk::channel_front_right | audio_chunk::channel_back_left | audio_chunk::channel_back_right | audio_chunk::channel_front_center | audio_chunk::channel_lfe | audio_chunk::channel_front_center_right | audio_chunk::channel_front_center_left,
-};
-
-static const unsigned g_audio_channel_config_table_xiph[] = 
-{
 	0,
-	audio_chunk::channel_config_mono,
-	audio_chunk::channel_config_stereo,
-	audio_chunk::channel_front_left | audio_chunk::channel_front_right | audio_chunk::channel_front_center,
-	audio_chunk::channel_front_left | audio_chunk::channel_front_right | audio_chunk::channel_back_left | audio_chunk::channel_back_right,
-	audio_chunk::channel_front_left | audio_chunk::channel_front_right | audio_chunk::channel_back_left | audio_chunk::channel_back_right | audio_chunk::channel_front_center,
-	audio_chunk::channel_config_5point1,
-	audio_chunk::channel_front_left | audio_chunk::channel_front_right | audio_chunk::channel_front_center | audio_chunk::channel_lfe | audio_chunk::channel_back_center | audio_chunk::channel_side_left | audio_chunk::channel_side_right,
-	audio_chunk::channel_front_left | audio_chunk::channel_front_right | audio_chunk::channel_front_center | audio_chunk::channel_lfe | audio_chunk::channel_back_left | audio_chunk::channel_back_right | audio_chunk::channel_side_left | audio_chunk::channel_side_right,
+	audio_chunk::channel_config_7point1,
+	0,
+	audio_chunk::channel_config_7point1 | audio_chunk::channel_front_center_right | audio_chunk::channel_front_center_left,
 };
 
 unsigned audio_chunk::g_guess_channel_config(unsigned count)
 {
-	if (count >= PFC_TABSIZE(g_audio_channel_config_table)) return 0;
-	return g_audio_channel_config_table[count];
+	if (count == 0) return 0;
+	if (count > 32) throw exception_io_data();
+	unsigned ret = 0;
+	if (count < PFC_TABSIZE(g_audio_channel_config_table)) ret = g_audio_channel_config_table[count];
+	if (ret == 0) {
+		ret = (1 << count) - 1;
+	}
+	PFC_ASSERT(g_count_channels(ret) == count);
+	return ret;	
 }
 
 unsigned audio_chunk::g_guess_channel_config_xiph(unsigned count) {
-	if (count == 0 || count >= PFC_TABSIZE(g_audio_channel_config_table_xiph)) throw exception_io_data();
-	return g_audio_channel_config_table_xiph[count];
+	return g_guess_channel_config(count);
 }
 
 unsigned audio_chunk::g_channel_index_from_flag(unsigned p_config,unsigned p_flag) {
@@ -198,6 +193,9 @@ const char * audio_chunk::g_channel_name_byidx(unsigned p_index) {
 	else return "?";
 }
 
+pfc::string8 audio_chunk::g_formatChannelMaskDesc(unsigned flags) {
+	pfc::string8 temp; g_formatChannelMaskDesc(flags, temp); return temp;
+}
 void audio_chunk::g_formatChannelMaskDesc(unsigned flags, pfc::string_base & out) {
 	out.reset();
 	unsigned idx = 0;

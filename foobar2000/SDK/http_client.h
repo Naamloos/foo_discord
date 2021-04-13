@@ -1,3 +1,5 @@
+#pragma once
+
 //! Implemented by file object returned by http_request::run methods. Allows you to retrieve various additional information returned by the server. \n
 //! Warning: reply status may change when seeking on the file object since seek operations often require a new HTTP request to be fired.
 class NOVTABLE http_reply : public service_base {
@@ -39,8 +41,15 @@ public:
 	void add_post_data(const char * name, const char * value) { add_post_data(name, value, strlen(value), "", ""); }
 };
 
+//! \since 1.5
+class NOVTABLE http_request_post_v2 : public http_request_post {
+	FB2K_MAKE_SERVICE_INTERFACE(http_request_post_v2, http_request_post);
+public:
+	virtual void set_post_data(const void* blob, size_t bytes, const char* contentType) = 0;
+};
+
 class NOVTABLE http_client : public service_base {
-	FB2K_MAKE_SERVICE_INTERFACE_ENTRYPOINT(http_client)
+	FB2K_MAKE_SERVICE_COREAPI(http_client)
 public:
 	//! Creates a HTTP request object.
 	//! @param type Request type. Currently supported: "GET" and "POST". Throws pfc::exception_not_implemented for unsupported values.

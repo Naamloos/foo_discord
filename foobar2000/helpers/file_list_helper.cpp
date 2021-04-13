@@ -1,5 +1,7 @@
 #include "stdafx.h"
 
+#include "file_list_helper.h"
+
 #ifndef _MSC_VER
 #define _strdup strdup
 #endif
@@ -8,7 +10,7 @@ static void file_list_remove_duplicates(pfc::ptr_list_t<char> & out)
 {
 	t_size n, m = out.get_count();
 	out.sort_t(metadb::path_compare);
-	bit_array_bittable mask(m);
+	pfc::bit_array_bittable mask(m);
 	t_size duplicates = 0;
 	for(n=1;n<m;n++) {
 		if (!metadb::path_compare(out[n-1],out[n])) {duplicates++;mask.set(n,true);}
@@ -29,7 +31,7 @@ namespace file_list_helper
 		}
 		return content.get_count();
 	}
-	void file_list_from_metadb_handle_list::__add(const char * p_what) {
+	void file_list_from_metadb_handle_list::_add(const char * p_what) {
 		char * temp = _strdup(p_what);
 		if (temp == NULL) throw std::bad_alloc();
 		try {m_data.add_item(temp); } catch(...) {free(temp); throw;}
@@ -41,7 +43,7 @@ namespace file_list_helper
 
 		t_size n, m = p_list.get_count();
 		for(n=0;n<m;n++) {
-			__add( p_list.get_item(n)->get_path() );
+			_add( p_list.get_item(n)->get_path() );
 		}
 		file_list_remove_duplicates(m_data);
 	}
@@ -56,11 +58,14 @@ namespace file_list_helper
 		for(n=0;n<m;n++)
 		{
 			filesystem::g_get_display_path(p_list.get_item(n)->get_path(),temp);
-			__add(temp);
+			_add(temp);
 		}
 		file_list_remove_duplicates(m_data);
+	}
 
-
+	file_list_from_metadb_handle_list::file_list_from_metadb_handle_list(metadb_handle_list_cref lst, bool bDisplayPaths) {
+		if ( bDisplayPaths ) init_from_list_display(lst);
+		else init_from_list( lst );
 	}
 
 	t_size file_list_from_metadb_handle_list::get_count() const {return m_data.get_count();}

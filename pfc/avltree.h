@@ -1,3 +1,5 @@
+#pragma once
+
 namespace pfc {
 
 	template<typename t_storage>
@@ -192,6 +194,7 @@ namespace pfc {
 			int result = compare(p_base->m_content,p_search);
 			if (result > 0) {
 				t_node * ret = g_find_or_add_node<t_search>(p_base->m_left,p_base.get_ptr(),p_search,p_new);
+				PFC_ASSERT(compare(ret->m_content, p_search) == 0);
 				if (p_new) {
 					recalc_depth(p_base);
 					g_rebalance(p_base);
@@ -199,6 +202,7 @@ namespace pfc {
 				return ret;
 			} else if (result < 0) {
 				t_node * ret = g_find_or_add_node<t_search>(p_base->m_right,p_base.get_ptr(),p_search,p_new);
+				PFC_ASSERT(compare(ret->m_content, p_search) == 0);
 				if (p_new) {
 					recalc_depth(p_base);
 					g_rebalance(p_base);
@@ -376,6 +380,18 @@ namespace pfc {
 			return __find_nearest<inclusive,above>(p_search);
 		}
 
+		avltree_t( t_self && other ) {
+			m_root = std::move( other.m_root ); other.m_root.release();
+		}
+
+		const t_self & operator=( t_self && other ) {
+			move_from ( other ); return *this;
+		}
+
+		void move_from( t_self & other ) {
+			reset(); m_root = std::move( other.m_root ); other.m_root.release();
+		}
+
 		template<typename t_param>
 		t_storage & add_item(t_param const & p_item) {
 			bool dummy;
@@ -488,6 +504,9 @@ namespace pfc {
 		iterator _first_var() { return _firstlast(false); }
 		//! Unsafe! Caller must not modify items in a way that changes sort order!
 		iterator _last_var() { return _firstlast(true); }
+
+		const_iterator cfirst() const throw() {return _firstlast(false);}
+		const_iterator clast() const throw() {return _firstlast(true);}
 
 		template<typename t_param> bool get_first(t_param & p_item) const throw() {
 			const_iterator iter = first();

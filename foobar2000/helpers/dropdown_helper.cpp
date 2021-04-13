@@ -1,7 +1,8 @@
 #include "stdafx.h"
-#include "dropdown_helper.h"
 
-#ifdef _WIN32
+#ifdef FOOBAR2000_DESKTOP_WINDOWS
+
+#include "dropdown_helper.h"
 
 void _cfg_dropdown_history_base::build_list(pfc::ptr_list_t<char> & out)
 {
@@ -39,6 +40,16 @@ static void g_setup_dropdown_fromlist(HWND wnd,const pfc::ptr_list_t<char> & lis
 	for(n=0;n<m;n++) {
 		uSendMessageText(wnd,CB_ADDSTRING,0,list[n]);
 	}
+}
+
+void _cfg_dropdown_history_base::setup_dropdown_set_value(HWND wnd) {
+	pfc::ptr_list_t<char> list;
+	build_list(list);
+	g_setup_dropdown_fromlist(wnd, list);
+	if ( list.get_size() > 0 ) {
+		uSetWindowText(wnd, list[0] );
+	}
+	list.free_all();
 }
 
 void _cfg_dropdown_history_base::setup_dropdown(HWND wnd)
@@ -160,4 +171,4 @@ bool _cfg_dropdown_history_base::on_context(HWND wnd,LPARAM coords) {
 	return false;
 }
 
-#endif // _WIN32
+#endif // FOOBAR2000_DESKTOP_WINDOWS

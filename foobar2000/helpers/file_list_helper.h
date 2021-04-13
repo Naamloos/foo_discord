@@ -1,12 +1,12 @@
-#ifndef _foobar2000_helpers_file_list_helper_
-#define _foobar2000_helpers_file_list_helper_
-
+#pragma once
 
 namespace file_list_helper
 {
 	//list guaranteed to be sorted by metadb::path_compare
 	class file_list_from_metadb_handle_list : public pfc::list_base_const_t<const char*> {
 	public:
+		file_list_from_metadb_handle_list() {}
+		file_list_from_metadb_handle_list( metadb_handle_list_cref lst, bool bDisplayPaths = false );
 
 		static t_size g_get_count(const list_base_const_t<metadb_handle_ptr> & p_list, t_size max = ~0);
 
@@ -19,12 +19,10 @@ namespace file_list_helper
 		~file_list_from_metadb_handle_list();
 
 	private:
-		void __add(const char * p_what);
+		void _add(const char * p_what);
 		pfc::ptr_list_t<char> m_data;
 	};
 
 
 };
 
-
-#endif //_foobar2000_helpers_file_list_helper_

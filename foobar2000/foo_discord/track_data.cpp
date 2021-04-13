@@ -3,8 +3,8 @@
 #include "track_data.h"
 #include "util.h"
 
-wchar_t* const track_data::empty = L"";
-wchar_t* const track_data::genre_separator = L" / ";
+wchar_t* const track_data::empty = const_cast<wchar_t*>(L"");
+wchar_t* const track_data::genre_separator = const_cast<wchar_t*>(L" / ");
 
 track_data::track_data(metadb_handle_ptr metadb_data) {
 	abort_callback_dummy abort;

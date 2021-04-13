@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "RpcClient.h"
 #include <sstream>
-using namespace std;
-#define _CRT_SECURE_NO_WARNING
 
 RpcClient RpcClient::rpc;
 
@@ -17,13 +15,12 @@ void RpcClient::Initialize()
 {
 	try{
 		// Initializing a new Discord GameSDK Core client. Indicate that Discord is not required to run this app.
-		discord::Core::Create(BASE_APPID, DiscordCreateFlags_NoRequireDiscord, &discordCore);
+		auto result = discord::Core::Create(BASE_APPID, DiscordCreateFlags_NoRequireDiscord, &discordCore);
 
 		// We're not doing anything yet, so we're idling.
 		details = "Idle";
 		state = NULL;
 		foostarttime = time(nullptr); // time(nullptr) returns the current time, apparently.
-
 		// Updating the presence, thus sending it to the client.
 		UpdatePresence();
 

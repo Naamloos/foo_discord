@@ -43,6 +43,16 @@ namespace pfc {
 			thread_selftest t; t.selftest();
 		}
 
+		{
+			pfc::map_t<pfc::string8, int, pfc::comparator_strcmp> map;
+			map["1"] = 1;
+			map["2"] = 2;
+			map["3"] = 3;
+			PFC_ASSERT(map.get_count() == 3);
+			PFC_ASSERT(map["1"] == 1);
+			PFC_ASSERT(map["2"] == 2);
+			PFC_ASSERT(map["3"] == 3);
+		}
 	}
 	// Self test routines that fail at compile time if there's something seriously wrong
 	void selftest_static() {

@@ -1,10 +1,13 @@
 #include "stdafx.h"
 
+#include "mp3_utils.h"
+#include "bitreader_helper.h"
+
 using namespace bitreader_helper;
 
 static unsigned extract_header_bits(const t_uint8 p_header[4],unsigned p_base,unsigned p_bits)
 {
-	assert(p_base+p_bits<=32);
+	PFC_ASSERT(p_base+p_bits<=32);
 	return (unsigned) extract_bits(p_header,p_base,p_bits);
 }
 
@@ -62,7 +65,7 @@ bool mp3_utils::ParseMPEGFrameHeader(TMPEGFrameInfo & p_info,const t_uint8 p_hea
 	int paddingdelta = 0;
 	parser.read(1);//private
 	unsigned channel_mode = parser.read(2);
-	parser.read(2);//channel_mode_extension
+	unsigned channel_mode_ext = parser.read(2);//channel_mode_extension
 	parser.read(1);//copyright
 	parser.read(1);//original
 	parser.read(2);//emphasis
@@ -159,10 +162,15 @@ bool mp3_utils::ParseMPEGFrameHeader(TMPEGFrameInfo & p_info,const t_uint8 p_hea
 		break;
 	}
 
+	
 	p_info.m_channel_mode = channel_mode;
+	p_info.m_channel_mode_ext = channel_mode_ext;
 
 	p_info.m_sample_rate = sample_rate;
+	p_info.m_sample_rate_idx = sample_rate_index;
 
+	p_info.m_bitrate = bitrate;
+	p_info.m_bitrate_idx = bitrate_index;
 
 	p_info.m_bytes = ( bitrate /*kbps*/ * (1000/8) /* kbps-to-bytes*/ * p_info.m_duration /*samples-per-frame*/ ) / sample_rate + paddingdelta;
 
@@ -182,7 +190,8 @@ unsigned mp3header::get_samples_per_frame()
 
 bool mp3_utils::IsSameStream(TMPEGFrameInfo const & p_frame1,TMPEGFrameInfo const & p_frame2) {
 	return 
-		p_frame1.m_channel_mode == p_frame2.m_channel_mode && 
+		// FFmpeg writes VBR headers with null channel mode...
+		/* p_frame1.m_channel_mode == p_frame2.m_channel_mode &&  */
 		p_frame1.m_sample_rate == p_frame2.m_sample_rate &&
 		p_frame1.m_layer == p_frame2.m_layer &&
 		p_frame1.m_mpegversion == p_frame2.m_mpegversion;
@@ -258,4 +267,10 @@ bool mp3_utils::ValidateFrameCRC(const t_uint8 * frameData, t_size frameSize) {
 	TMPEGFrameInfo info;
 	if (!ParseMPEGFrameHeader(info, frameData)) return false; //FAIL, not a valid frame
 	return ValidateFrameCRC(frameData, frameSize, info);
+}
+
+
+bool mp3_utils::ParseMPEGFrameHeader(TMPEGFrameInfo & p_info, const void * bytes, size_t bytesAvail) {
+	if (bytesAvail < 4) return false; //FAIL, not a valid frame
+	return ParseMPEGFrameHeader(p_info, reinterpret_cast<const t_uint8*>(bytes));
 }

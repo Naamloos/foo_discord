@@ -1,5 +1,4 @@
-#ifndef _PFC_ARRAY_H_
-#define _PFC_ARRAY_H_
+#pragma once
 
 namespace pfc {
 
@@ -20,18 +19,29 @@ namespace pfc {
 		array_staticsize_t(const t_self & p_source) : m_size(0), m_array(NULL) {
 			*this = p_source;
 		}
+        array_staticsize_t(t_self && p_source) {
+            move_(p_source);
+        }
 
 		//! Copy operator nonfunctional when data type is not copyable.
 		const t_self & operator=(const t_self & p_source) {
 			release_();
 			
-			//m_array = pfc::malloc_copy_t(p_source.get_size(),p_source.get_ptr());
 			const t_size newsize = p_source.get_size();
-			m_array = new t_item[newsize];
-			m_size = newsize;
-			for(t_size n = 0; n < newsize; n++) m_array[n] = p_source[n];
+            if (newsize > 0) {
+                m_array = new t_item[newsize];
+                m_size = newsize;
+                for(t_size n = 0; n < newsize; n++) m_array[n] = p_source[n];
+            }
 			return *this;
 		}
+        
+        //! Move operator.
+        const t_self & operator=(t_self && p_source) {
+            release_();
+            move_(p_source);
+            return *this;
+        }
 
 		void set_size_discard(t_size p_size) {
 			release_();
@@ -40,15 +50,29 @@ namespace pfc {
 				m_size = p_size;
 			}
 		}
-		//! Warning: buffer pointer must not point to buffer allocated by this array (fixme).
 		template<typename t_source>
 		void set_data_fromptr(const t_source * p_buffer,t_size p_count) {
-			set_size_discard(p_count);
-			pfc::copy_array_loop_t(*this,p_buffer,p_count);
+            if (p_count == m_size) {
+                pfc::copy_array_loop_t(*this,p_buffer,p_count);
+            } else {
+                t_item * arr = new t_item[p_count];
+                try {
+                    pfc::copy_array_loop_t(arr, p_buffer, p_count);
+                } catch(...) { delete[] arr; throw; }
+                delete[] m_array;
+                m_array = arr;
+                m_size = p_count;
+            }
 		}
+        
+        template<typename t_source>
+        void assign(t_source const * items, size_t count) {
+            set_data_fromptr( items, count );
+        }
 
 		
 		t_size get_size() const {return m_size;}
+		t_size size() const {return m_size;} // std compat
 		const t_item * get_ptr() const {return m_array;}
 		t_item * get_ptr() {return m_array;}
 
@@ -63,6 +87,12 @@ namespace pfc {
 			m_size = 0;
 			delete[] pfc::replace_null_t(m_array);
 		}
+        void move_(t_self & from) {
+            m_size = from.m_size;
+            m_array = from.m_array;
+            from.m_size = 0;
+            from.m_array = NULL;
+        }
 		t_item * m_array;
 		t_size m_size;
 	};
@@ -102,6 +132,7 @@ namespace pfc {
 		const t_self & operator=(t_self && p_source) {move_from(p_source); return *this;}
 		
 		void set_size(t_size p_size) {m_alloc.set_size(p_size);}
+		void resize( size_t s ) { set_size(s); } // std compat
 		
 		template<typename fill_t>
 		void set_size_fill(size_t p_size, fill_t const & filler) {
@@ -128,6 +159,7 @@ namespace pfc {
 		void set_size_discard(t_size p_size) {m_alloc.set_size(p_size);}
 		void set_count(t_size p_count) {m_alloc.set_size(p_count);}
 		t_size get_size() const {return m_alloc.get_size();}
+		size_t size() const {return m_alloc.get_size();} // std compat
 		t_size get_count() const {return m_alloc.get_size();}
 		void force_reset() {m_alloc.force_reset();}
 		
@@ -177,11 +209,17 @@ namespace pfc {
 			set_size(new_size);
 		}
 
-		template<typename t_append>
-		void append_single_val( t_append item ) {
+        template<typename item_t>
+        void add_item( item_t && item ) {
+            const t_size base = get_size();
+            increase_size(1);
+            m_alloc[base] = std::forward<item_t>( item );
+        }
+		template<typename item_t>
+		void append_single_val( item_t && item ) {
 			const t_size base = get_size();
 			increase_size(1);
-			m_alloc[base] = item;
+            m_alloc[base] = std::forward<item_t>( item );
 		}
 
 		template<typename t_append>
@@ -321,5 +359,3 @@ namespace pfc {
 
 }
 
-
-#endif //_PFC_ARRAY_H_

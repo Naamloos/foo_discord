@@ -8,7 +8,7 @@ public:
 	virtual bool is_associatable(unsigned idx) = 0;
 
 #if FOOBAR2000_TARGET_VERSION >= 76
-	static void build_openfile_mask(pfc::string_base & out,bool b_include_playlists=true);
+	static void build_openfile_mask(pfc::string_base & out,bool b_include_playlists=true, bool b_include_archives = false);
 	static void make_extension_support_fingerprint(pfc::string_base & str);
 	static void make_filetype_support_fingerprint(pfc::string_base & str);
 #endif
@@ -30,7 +30,7 @@ public:
 		pfc::chain_list_v2_t<pfc::string> exts; pfc::splitStringSimple_toList(exts,";",temp);
 		if (exts.get_count() == 0) return false;//should not happen
 		temp.reset();
-		for(pfc::const_iterator<pfc::string> walk = exts.first(); walk.is_valid(); ++walk) {
+		for(auto walk = exts.cfirst(); walk.is_valid(); ++walk) {
 			if (!temp.is_empty()) temp << ";";
 			temp << "*." << walk->get_ptr();
 		}

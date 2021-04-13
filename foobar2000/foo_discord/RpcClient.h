@@ -1,12 +1,16 @@
 #pragma once
+#define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <sstream>
 #include "stdafx.h"
 #include "util.h"
 #include "preferences.h"
 #include <ctime>
-#include "../../include/discord.h"
-#pragma comment(lib, "../../include/discord_game_sdk.dll.lib")
+#pragma comment(lib, "../../lib/discord_game_sdk.dll.lib")
+
+#include "discord.h"
+#pragma pack(push, 1)
+
 #define BASE_APPID 379748462377566219
 
 class RpcClient

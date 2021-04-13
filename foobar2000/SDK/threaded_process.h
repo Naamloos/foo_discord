@@ -1,26 +1,29 @@
+#pragma once
+#include <functional>
+
 //! Callback class passed to your threaded_process client code; allows you to give various visual feedback to the user.
-class NOVTABLE threaded_process_status {
+class threaded_process_status {
 public:
 	enum {progress_min = 0, progress_max = 5000};
 	
 	//! Sets the primary progress bar state; scale from progress_min to progress_max.
-	virtual void set_progress(t_size p_state) = 0;
+	virtual void set_progress(t_size p_state) {}
 	//! Sets the secondary progress bar state; scale from progress_min to progress_max.
-	virtual void set_progress_secondary(t_size p_state) = 0;
+	virtual void set_progress_secondary(t_size p_state) {}
 	//! Sets the currently progressed item label. When working with files, you should use set_file_path() instead.
-	virtual void set_item(const char * p_item,t_size p_item_len = ~0) = 0;
+	virtual void set_item(const char * p_item,t_size p_item_len = ~0) {}
 	//! Sets the currently progressed item label; treats the label as a file path.
-	virtual void set_item_path(const char * p_item,t_size p_item_len = ~0) = 0;
+	virtual void set_item_path(const char * p_item,t_size p_item_len = ~0) {}
 	//! Sets the title of the dialog. You normally don't need this function unless you want to override the title you set when initializing the threaded_process.
-	virtual void set_title(const char * p_title,t_size p_title_len = ~0) = 0;
+	virtual void set_title(const char * p_title,t_size p_title_len = ~0) {}
 	//! Should not be used.
-	virtual void force_update() = 0;
+	virtual void force_update() {}
 	//! Returns whether the process is paused.
-	virtual bool is_paused() = 0;
+	virtual bool is_paused() {return false;}
 	
 	//! Checks if process is paused and sleeps if needed; returns false when process should be aborted, true on success. \n
 	//! You should use poll_pause() instead of calling this directly.
-	virtual bool process_pause() = 0;
+	virtual bool process_pause() {return true;}
 
 	//! Automatically sleeps if the process is paused.
 	void poll_pause() {if (!process_pause()) throw exception_aborted();}
@@ -33,21 +36,32 @@ public:
 	void set_progress_float(double p_state);
 	//! Helper; sets secondary progress with a float 0..1 scale.
 	void set_progress_secondary_float(double p_state);
-protected:
-	threaded_process_status() {}
-	~threaded_process_status() {}
+	//! Helper; gracefully reports multiple items being concurrently worked on.
+	void set_items( metadb_handle_list_cref items );
+	void set_items( pfc::list_base_const_t<const char*> const & paths );
+};
+
+//! Fb2k mobile compatibility
+class threaded_process_context {
+public:
+	static HWND g_default() { return core_api::get_main_window(); }
 };
 
 //! Callback class for the threaded_process API. You must implement this to create your own threaded_process client.
 class NOVTABLE threaded_process_callback : public service_base {
 public:
+	typedef HWND ctx_t; // fb2k mobile compatibility
+
 	//! Called from the main thread before spawning the worker thread. \n
 	//! Note that you should not access the window handle passed to on_init() in the worker thread later on.
-	virtual void on_init(HWND p_wnd) {}
+	virtual void on_init(ctx_t p_wnd) {}
 	//! Called from the worker thread. Do all the hard work here.
 	virtual void run(threaded_process_status & p_status,abort_callback & p_abort) = 0;
 	//! Called after the worker thread has finished executing.
-	virtual void on_done(HWND p_wnd,bool p_was_aborted) {}
+	virtual void on_done(ctx_t p_wnd,bool p_was_aborted) {}
+	
+	//! Safely prevent destruction from worker threads.
+	static bool serviceRequiresMainThreadDestructor() { return true; }
 
 	FB2K_MAKE_SERVICE_INTERFACE(threaded_process_callback,service_base);
 };
@@ -103,7 +117,7 @@ public:
 	//! Queries user settings; returns whether various timeconsuming tasks should be blocking machine standby.
 	static bool g_query_preventStandby();
 
-	FB2K_MAKE_SERVICE_INTERFACE_ENTRYPOINT(threaded_process);
+	FB2K_MAKE_SERVICE_COREAPI(threaded_process);
 };
 
 
@@ -116,4 +130,24 @@ public:
 	void on_done(HWND p_wnd,bool p_was_aborted) {m_target->tpc_on_done(p_wnd, p_was_aborted);	}
 private:
 	const service_ptr_t<TTarget> m_target;
+};
+
+//! Helper - lambda based threaded_process_callback implementation
+class threaded_process_callback_lambda : public threaded_process_callback {
+public:
+	typedef std::function<void(ctx_t)> on_init_t;
+	typedef std::function<void(threaded_process_status&, abort_callback&)> run_t;
+	typedef std::function<void(ctx_t, bool)> on_done_t;
+
+	static service_ptr_t<threaded_process_callback_lambda> create();
+	static service_ptr_t<threaded_process_callback_lambda> create(run_t f);
+	static service_ptr_t<threaded_process_callback_lambda> create(on_init_t f1, run_t f2, on_done_t f3);
+
+	on_init_t m_on_init;
+	run_t m_run;
+	on_done_t m_on_done;
+
+	void on_init(ctx_t p_ctx);
+	void run(threaded_process_status & p_status, abort_callback & p_abort);
+	void on_done(ctx_t p_ctx, bool p_was_aborted);
 };

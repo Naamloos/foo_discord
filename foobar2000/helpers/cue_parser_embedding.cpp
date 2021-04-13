@@ -1,4 +1,5 @@
 #include "stdafx.h"
+#include "cue_parser.h"
 
 using namespace cue_parser;
 using namespace file_info_record_helper;
@@ -25,6 +26,7 @@ namespace {
 		void operator() (unsigned p_trackno,const track_record & p_record) {
 			if (p_trackno > 0) {
 				cue_creator::t_entry_list::iterator iter = m_entries.insert_last();
+				iter->m_trackType = "AUDIO";
 				iter->m_file = p_record.m_file;
 				iter->m_flags = p_record.m_flags;
 				iter->m_index_list = p_record.m_index_list;
@@ -122,9 +124,18 @@ namespace {
 	};
 };
 
-static void strip_redundant_track_meta(unsigned p_tracknumber,const file_info & p_cueinfo,file_info_record::t_meta_map & p_meta,const char * p_metaname) {
-	t_size metaindex = p_cueinfo.meta_find(p_metaname);
-	if (metaindex == ~0) return;
+static bool meta_value_equals(const char* v1, const char* v2, bool asNumber) {
+	if (asNumber) {
+		// Special fix: leading zeros on track numbers
+		while( *v1 == '0' ) ++ v1;
+		while( *v2 == '0' ) ++ v2;
+	}
+	return strcmp(v1,v2) == 0;
+}
+
+static void strip_redundant_track_meta(unsigned p_tracknumber,const file_info & p_cueinfo,file_info_record::t_meta_map & p_meta,const char * p_metaname, bool asNumber) {
+	const size_t metaindex = p_cueinfo.meta_find(p_metaname);
+	if (metaindex == SIZE_MAX) return;
 	pfc::string_formatter namelocal;
 	build_cue_meta_name(p_metaname,p_tracknumber,namelocal);
 	{
@@ -133,7 +144,8 @@ static void strip_redundant_track_meta(unsigned p_tracknumber,const file_info & 
 		file_info_record::t_meta_value::const_iterator iter = val->first();
 		for(t_size valwalk = 0, valcount = p_cueinfo.meta_enum_value_count(metaindex); valwalk < valcount; ++valwalk) {
 			if (iter.is_empty()) return;
-			if (strcmp(*iter,p_cueinfo.meta_enum_value(metaindex,valwalk)) != 0) return;
+
+			if (!meta_value_equals(*iter,p_cueinfo.meta_enum_value(metaindex,valwalk), asNumber)) return;
 			++iter;
 		}
 		if (!iter.is_empty()) return;
@@ -180,8 +192,8 @@ void embeddedcue_metadata_manager::get_tag(file_info & p_info) const {
 
 		//strip redundant titles and tracknumbers that the cuesheet already contains
 		for(cue_creator::t_entry_list::const_iterator iter = entries.first(); iter.is_valid(); ++iter) {
-			strip_redundant_track_meta(iter->m_track_number,iter->m_infos,output.m_meta,"tracknumber");
-			strip_redundant_track_meta(iter->m_track_number,iter->m_infos,output.m_meta,"title");
+			strip_redundant_track_meta(iter->m_track_number,iter->m_infos,output.m_meta,"tracknumber", true);
+			strip_redundant_track_meta(iter->m_track_number,iter->m_infos,output.m_meta,"title", false);
 		}
 
 

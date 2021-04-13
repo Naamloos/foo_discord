@@ -1,5 +1,4 @@
-#ifndef _PFC_LIST_H_
-#define _PFC_LIST_H_
+#pragma once
 
 namespace pfc {
 
@@ -13,8 +12,8 @@ public:
 
 	inline t_size get_size() const {return get_count();}
 
-	inline T get_item(t_size n) const {T temp; get_item_ex(temp,n); return std::move(temp);}
-	inline T operator[](t_size n) const {T temp; get_item_ex(temp,n); return std::move(temp);}
+	inline T get_item(t_size n) const {T temp; get_item_ex(temp,n); return temp;}
+	inline T operator[](t_size n) const {T temp; get_item_ex(temp,n); return temp;}
 
 	template<typename t_compare>
 	t_size find_duplicates_sorted_t(t_compare p_compare,bit_array_var & p_out) const
@@ -233,9 +232,9 @@ public:
 		int compare(const T& p_item1,const T& p_item2) {return ::pfc::compare_t(p_item1,p_item2);}
 	};
 
-	void sort() {sort(sort_callback_auto());}
-	template<typename t_compare> void sort_t(t_compare p_compare) {sort(sort_callback_impl_t<t_compare>(p_compare));}
-	template<typename t_compare> void sort_stable_t(t_compare p_compare) {sort_stable(sort_callback_impl_t<t_compare>(p_compare));}
+	void sort() {sort_callback_auto cb;sort(cb);}
+	template<typename t_compare> void sort_t(t_compare p_compare) {sort_callback_impl_t<t_compare> cb(p_compare);sort(cb);}
+	template<typename t_compare> void sort_stable_t(t_compare p_compare) {sort_callback_impl_t<t_compare> cb(p_compare); sort_stable(cb);}
 
 	template<typename t_compare> void sort_remove_duplicates_t(t_compare p_compare)
 	{
@@ -425,9 +424,9 @@ public:
 
 	void get_items_mask(list_impl_t<T,t_storage> & out,const bit_array & mask)
 	{
-		t_size n,count = get_size();
-		for_each_bit_array(n,mask,true,0,count)
+		mask.walk( get_size(), [&] (size_t n) {
 			out.add_item(m_buffer[n]);
+		} );
 	}
 
 	void filter_mask(const bit_array & mask)
@@ -639,4 +638,3 @@ private:
 template<typename item, template<typename> class alloc> class traits_t<list_t<item, alloc> > : public combine_traits<traits_t<alloc<item> >, traits_vtable> {};
 
 }
-#endif //_PFC_LIST_H_
