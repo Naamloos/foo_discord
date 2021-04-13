@@ -6,6 +6,7 @@
 #include "preferences.h"
 #include <ctime>
 #include "../../include/discord.h"
+#pragma comment(lib, "../../include/discord_game_sdk.dll.lib")
 #define BASE_APPID 379748462377566219
 
 class RpcClient
