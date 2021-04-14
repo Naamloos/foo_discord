@@ -19,7 +19,6 @@ void RpcClient::Initialize()
 
 		// We're not doing anything yet, so we're idling.
 		strcpy(details, "Idle");
-		state = NULL;
 		foostarttime = time(nullptr); // time(nullptr) returns the current time, apparently.
 		// Updating the presence, thus sending it to the client.
 		UpdatePresence();
@@ -40,7 +39,7 @@ void RpcClient::UpdatePresence() {
 		strcpy(largeimagekey, getArtType());
 	}
 	else {
-		largeimagekey = NULL;
+		strcpy(largeimagekey, "");
 	}
 
 	// Check whether the user wants to show elapsed time. If so, set it.
@@ -76,7 +75,7 @@ void RpcClient::UpdatePresence() {
 
 // Sets a new song name.
 void RpcClient::SetSongName(wchar_t* songname) {
-	details = util::wide_to_utf8(songname);
+	strcpy(details, util::wide_to_utf8(&*songname));
 }
 
 // Sets the artist name and the album name.
@@ -88,10 +87,11 @@ void RpcClient::SetArtistName(wchar_t* artistname, wchar_t* albumname) {
 		wcscat(buffer, util::utf8_to_wide(" ["));
 		wcscat(buffer, albumname);
 		wcscat(buffer, util::utf8_to_wide("]"));
-		state = util::wide_to_utf8(buffer);
+
+		strcpy(state, util::wide_to_utf8(&*buffer));
 	}
 	else {
-		state = util::wide_to_utf8(artistname);
+		strcpy(state, util::wide_to_utf8(&*artistname));
 	}
 }
 
