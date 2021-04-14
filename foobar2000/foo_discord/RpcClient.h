@@ -2,14 +2,11 @@
 #define _CRT_SECURE_NO_WARNINGS
 #include <iostream>
 #include <sstream>
-#include "stdafx.h"
+#include <ctime>
+
 #include "util.h"
 #include "preferences.h"
-#include <ctime>
-#pragma comment(lib, "../../lib/discord_game_sdk.dll.lib")
-
-#include "discord.h"
-#pragma pack(push, 1)
+#include "discord/discord.h"
 
 #define BASE_APPID 379748462377566219
 
@@ -42,14 +39,28 @@ private:
 	double starttime = 0;
 	double foostarttime = 0;
 
-	const char* smallimagekey;
-	const char* largeimagekey;
-	const char* smallimagetext;
-	const char* largeimagetext;
-	const char* state;
-	const char* details;
+	char _smallimagekey[128] = "";
+	char* smallimagekey = &*_smallimagekey;
+
+	char _largeimagekey[128] = "";
+	char* largeimagekey = &*_largeimagekey;
+
+	char _smallimagetext[128] = "";
+	char* smallimagetext = &*_smallimagetext;
+
+	char _largeimagetext[128] = "";
+	char* largeimagetext = &*_largeimagetext;
+
+	char _state[128] = "";
+	char* state = &*_state;
+
+	char _details[128] = "";
+	char* details = &*_details;
+
+
 	double start;
 	double end;
 
-	const char* albumcopy;
+	char _albumcopy[128] = "";
+	char* albumcopy = &*_albumcopy;
 };

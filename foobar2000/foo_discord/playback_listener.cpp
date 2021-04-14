@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include <helpers/foobar2000+atl.h>
 
 #include "playback_listener.h"
 #include "track_data.h"

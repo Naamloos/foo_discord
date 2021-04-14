@@ -1,4 +1,4 @@
-#include "stdafx.h"
+#include <helpers/foobar2000+atl.h>
 
 #include "preferences.h"
 

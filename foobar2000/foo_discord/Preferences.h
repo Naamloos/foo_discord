@@ -1,6 +1,6 @@
 #pragma once
 
-#include "stdafx.h"
+#include <helpers/foobar2000+atl.h>
 #include "resource.h"
 #include <helpers/atl-misc.h>
 

@@ -1,6 +1,6 @@
 #pragma once
 
-#include "stdafx.h"
+#include <helpers/foobar2000+atl.h>
 
 namespace util {
 	inline wchar_t* utf8_to_wide(const char* src) {

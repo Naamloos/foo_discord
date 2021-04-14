@@ -83,14 +83,16 @@
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <TreatSpecificWarningsAsErrors>4715</TreatSpecificWarningsAsErrors>
       <AdditionalIncludeDirectories>..;../..</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -99,21 +101,23 @@
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalDependencies>../shared/shared.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>../../lib/discord_game_sdk.dll.lib;../shared/shared.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
-      <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <TreatSpecificWarningsAsErrors>4715</TreatSpecificWarningsAsErrors>
       <AdditionalIncludeDirectories>..;../..</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
+      <MultiProcessorCompilation>true</MultiProcessorCompilation>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -121,14 +125,13 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
-      <AdditionalDependencies>../shared/shared.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>../../lib/discord_game_sdk.dll.lib;../shared/shared.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PrecompiledHeader>Use</PrecompiledHeader>
-      <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <AdditionalOptions>/d2notypeopt %(AdditionalOptions)</AdditionalOptions>
@@ -136,13 +139,14 @@
       <BufferSecurityCheck>false</BufferSecurityCheck>
       <StringPooling>true</StringPooling>
       <OmitFramePointers>true</OmitFramePointers>
-      <AdditionalIncludeDirectories>../../include;..;../..</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..;../..</AdditionalIncludeDirectories>
       <FloatingPointModel>Fast</FloatingPointModel>
       <PreprocessorDefinitions>NDEBUG;_WINDLL;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <LanguageStandard>stdcpplatest</LanguageStandard>
       <MultiProcessorCompilation>true</MultiProcessorCompilation>
       <CompileAs>CompileAsCpp</CompileAs>
       <CallingConvention>Cdecl</CallingConvention>
+      <InlineFunctionExpansion>Disabled</InlineFunctionExpansion>
     </ClCompile>
     <Link>
       <GenerateDebugInformation>true</GenerateDebugInformation>
@@ -153,10 +157,11 @@
       <DataExecutionPrevention>
       </DataExecutionPrevention>
       <TargetMachine>MachineX86</TargetMachine>
-      <AdditionalDependencies>../../lib/discord_game_sdk.dll.lib;../shared/shared.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
-      <AdditionalLibraryDirectories>../../lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>../../lib/discord_game_sdk.dll.lib;../shared/shared.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib</AdditionalDependencies>
+      <AdditionalLibraryDirectories>%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ShowProgress>LinkVerbose</ShowProgress>
       <RegisterOutput>true</RegisterOutput>
+      <PerUserRedirection>true</PerUserRedirection>
     </Link>
     <ProjectReference>
       <UseLibraryDependencyInputs>false</UseLibraryDependencyInputs>
@@ -166,7 +171,7 @@
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <ClCompile>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
-      <PrecompiledHeader>Use</PrecompiledHeader>
+      <PrecompiledHeader>NotUsing</PrecompiledHeader>
       <PrecompiledHeaderFile>stdafx.h</PrecompiledHeaderFile>
       <WarningLevel>Level3</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
@@ -193,7 +198,7 @@
       <RandomizedBaseAddress>false</RandomizedBaseAddress>
       <DataExecutionPrevention>
       </DataExecutionPrevention>
-      <AdditionalDependencies>../../lib/discord_game_sdk.dll.lib;../shared/shared.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>../../lib/discord_game_sdk.dll.lib;../shared/shared.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib</AdditionalDependencies>
       <AdditionalLibraryDirectories>../../lib;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <ShowProgress>LinkVerbose</ShowProgress>
       <RegisterOutput>true</RegisterOutput>
@@ -205,26 +210,51 @@
     </ProjectReference>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="discord\achievement_manager.cpp" />
+    <ClCompile Include="discord\activity_manager.cpp" />
+    <ClCompile Include="discord\application_manager.cpp" />
+    <ClCompile Include="discord\core.cpp" />
+    <ClCompile Include="discord\image_manager.cpp" />
+    <ClCompile Include="discord\lobby_manager.cpp" />
+    <ClCompile Include="discord\network_manager.cpp" />
+    <ClCompile Include="discord\overlay_manager.cpp" />
+    <ClCompile Include="discord\relationship_manager.cpp" />
+    <ClCompile Include="discord\storage_manager.cpp" />
+    <ClCompile Include="discord\store_manager.cpp" />
+    <ClCompile Include="discord\types.cpp" />
+    <ClCompile Include="discord\user_manager.cpp" />
+    <ClCompile Include="discord\voice_manager.cpp" />
     <ClCompile Include="initquit.cpp" />
     <ClCompile Include="main.cpp" />
-    <ClCompile Include="PCH.cpp">
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
-      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|x64'">Create</PrecompiledHeader>
-    </ClCompile>
     <ClCompile Include="playback_listener.cpp" />
     <ClCompile Include="Preferences.cpp" />
     <ClCompile Include="RpcClient.cpp" />
     <ClCompile Include="track_data.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="discord\achievement_manager.h" />
+    <ClInclude Include="discord\activity_manager.h" />
+    <ClInclude Include="discord\application_manager.h" />
+    <ClInclude Include="discord\core.h" />
+    <ClInclude Include="discord\discord.h" />
+    <ClInclude Include="discord\event.h" />
+    <ClInclude Include="discord\ffi.h" />
+    <ClInclude Include="discord\image_manager.h" />
+    <ClInclude Include="discord\lobby_manager.h" />
+    <ClInclude Include="discord\network_manager.h" />
+    <ClInclude Include="discord\overlay_manager.h" />
+    <ClInclude Include="discord\relationship_manager.h" />
+    <ClInclude Include="discord\stdafx.h" />
+    <ClInclude Include="discord\storage_manager.h" />
+    <ClInclude Include="discord\store_manager.h" />
+    <ClInclude Include="discord\types.h" />
+    <ClInclude Include="discord\user_manager.h" />
+    <ClInclude Include="discord\voice_manager.h" />
     <ClInclude Include="playback_listener.h" />
     <ClInclude Include="Preferences.h" />
     <ClInclude Include="resource.h" />
     <ClInclude Include="resource1.h" />
     <ClInclude Include="RpcClient.h" />
-    <ClInclude Include="stdafx.h" />
     <ClInclude Include="track_data.h" />
     <ClInclude Include="util.h" />
   </ItemGroup>

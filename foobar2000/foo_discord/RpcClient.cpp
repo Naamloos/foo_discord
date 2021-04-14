@@ -1,10 +1,10 @@
-#include "stdafx.h"
+#include <helpers/foobar2000+atl.h>
 #include "RpcClient.h"
 #include <sstream>
 
 RpcClient RpcClient::rpc;
 
-discord::Core* discordCore;
+discord::Core* discordCore{};
 
 RpcClient::RpcClient()
 {
@@ -14,11 +14,11 @@ RpcClient::RpcClient()
 void RpcClient::Initialize()
 {
 	try{
-		// Initializing a new Discord GameSDK Core client. Indicate that Discord is not required to run this app.
-		auto result = discord::Core::Create(BASE_APPID, DiscordCreateFlags_NoRequireDiscord, &discordCore);
+		// Initializing a new Discord GameSDK Core client.
+		discord::Core::Create(BASE_APPID, DiscordCreateFlags_Default, &discordCore);
 
 		// We're not doing anything yet, so we're idling.
-		details = "Idle";
+		strcpy(details, "Idle");
 		state = NULL;
 		foostarttime = time(nullptr); // time(nullptr) returns the current time, apparently.
 		// Updating the presence, thus sending it to the client.
@@ -37,7 +37,7 @@ void RpcClient::Initialize()
 void RpcClient::UpdatePresence() {
 	// Check whether the user wants to show images. If so, set image to current option.
 	if (preferences::get_show_image()) {
-		largeimagekey = getArtType();
+		strcpy(largeimagekey, getArtType());
 	}
 	else {
 		largeimagekey = NULL;
@@ -50,8 +50,7 @@ void RpcClient::UpdatePresence() {
 	}
 
 	// Create a new DiscordRichPresence instance.
-	discord::Activity presence;
-	memset(&presence, 0, sizeof(presence));
+	discord::Activity presence = discord::Activity();
 
 	// Set all fields of the presence to their respective values.
 	presence.SetDetails(details);
@@ -131,27 +130,27 @@ void RpcClient::KillTimer() {
 
 // Sets current status to playing.
 void RpcClient::SetPlay() {
-	smallimagekey = "play";
-	smallimagetext = "Playing";
+	strcpy(smallimagekey, "play");
+	strcpy(smallimagetext, "Playing");
 	hasTimer = true;
 }
 
 // Sets current status to paused.
 void RpcClient::SetPause() {
-	smallimagekey = "pause";
-	smallimagetext = "Paused";
+	strcpy(smallimagekey, "pause");
+	strcpy(smallimagetext, "Paused");
 	pausetime = time(nullptr);
 	hasTimer = false;
 }
 
 // Sets current status to stopped.
 void RpcClient::SetStop() {
-	smallimagekey = "stop";
-	smallimagetext = "Stopped";
+	strcpy(smallimagekey, "stop");
+	strcpy(smallimagetext, "Stopped");
 
 	if (!preferences::get_show_songstop()) {
-		details = "Idle";
-		state = " ";
+		strcpy(details, "Idle");
+		strcpy(state, " ");
 	}
 	hasTimer = false;
 }
