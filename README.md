@@ -1,3 +1,8 @@
+# DEPRECATED
+I will no longer be providing support for foo_discord. It _should_ still work, but I won't be continuing development. The latest release is available over at the releases page. For continued support, please use the [`foo_discord_rich`](https://github.com/TheQwertiest/foo_discord_rich) addon developed by TheQwertiest.
+
+---------------------------------------------------------
+
 # foo_discord
 Adds the ability for foobar2000 to interact with Discord rich presences.
 
